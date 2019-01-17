@@ -7,5 +7,10 @@ module = "ddi"
 author = "Erinn Looney-Triggs"
 author-email = "erinn.looneytriggs@gmail.com"
 home-page = "https://github.com/erinn/ddi/"
-classifiers = ["License :: OSI Approved :: AGPL License"]
-
+classifiers = ["License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)"]
+requires = [
+    "click",
+    "netaddr",
+    "pyyaml",
+    "requests",
+]

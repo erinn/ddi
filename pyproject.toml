@@ -1,0 +1,11 @@
+[build-system]
+requires = ["flit"]
+build-backend = "flit.buildapi"
+
+[tool.flit.metadata]
+module = "ddi"
+author = "Erinn Looney-Triggs"
+author-email = "erinn.looneytriggs@gmail.com"
+home-page = "https://github.com/erinn/ddi/"
+classifiers = ["License :: OSI Approved :: AGPL License"]
+

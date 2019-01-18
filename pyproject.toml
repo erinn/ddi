@@ -14,3 +14,6 @@ requires = [
     "pyyaml",
     "requests",
 ]
+
+[tool.flit.scripts]
+ddi = "ddi.main:main"

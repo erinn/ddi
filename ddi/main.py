@@ -4,4 +4,4 @@ import ddi.host
 
 
 def main():
-    cli(auto_envvar_prefix='DDI')
+    cli(auto_envvar_prefix='DDI', obj={})

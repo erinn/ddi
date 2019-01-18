@@ -21,7 +21,7 @@ def initiate_session(username: str, password: str):
                'X-IPM-Password': password}
 
     session = requests.Session()
-    session.verify = True
+    session.verify = False
     session.headers = headers
 
     return session
@@ -31,13 +31,20 @@ def initiate_session(username: str, password: str):
 @click.option('--debug', '-d', is_flag=True, default=False, help='Enable debug output.')
 @click.option('--json', '-j', is_flag=True, default=False, help='Output in JSON.')
 @click.option('--password', '-p', prompt=True, hide_input=True, help="The DDI user's password.")
-@click.option('--server', '-s', prompt=True, help='The DDI server to connect to.')
+@click.option('--server', '-s', prompt=True, help="The DDI server's URL to connect to.")
 @click.option('--username', '-u', help='The DDI username.')
 @click.version_option(version=__version__)
 @click.pass_context
-def cli(ctx, debug, json, password, username, auto_envvar_prefix='DDI'):
+def cli(ctx, debug, json, password, server, username):
     session = initiate_session(username, password)
-    ctx.obj['SESSION'] = session
+
+    ctx.ensure_object(dict)
+    ctx.obj['debug'] = debug
+    ctx.obj['json'] = json
+    ctx.obj['server'] = server
+    ctx.obj['session'] = session
+
+
 
 
 

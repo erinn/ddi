@@ -166,3 +166,5 @@ fabric.properties
 # Editor-based Rest Client
 .idea/httpRequests
 
+# Environment file for easy setup
+env.sh

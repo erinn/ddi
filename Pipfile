@@ -12,6 +12,9 @@ click = "*"
 requests = "*"
 pyyaml = "*"
 netaddr = "*"
+colorama = "*"
+pyjsend = "*"
+keyring = "*"
 
 [requires]
 python_version = "3.7"

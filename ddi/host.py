@@ -1,23 +1,49 @@
 from ddi.cli import cli
 import binascii
 import click
+import logging
 import json
 import netaddr
 import socket
 
-
+logger = logging.getLogger(__name__)
 
 class NotFoundError(Exception):
     pass
 
 
+def delete_host(ip_id: str, session: object, url:str):
+    """
+    Delete a given host by ip_id.
+
+    :param str ip_id:
+    :param object session:
+    :param str url:
+    :return:
+    """
+    logger.debug('Deleting host ip_id: %s', ip_id)
+
+    payload = {'ip_id': ip_id}
+
+    r = session.delete(url + "ip_delete", params=payload)
+
+    logger.debug('Delete result code: %s, JSON: %s', r.status_code, r.json())
+    r.raise_for_status()
+
+    return r.json()
+
+
 def get_host(fqdn: str, session: object, url: str):
     """
+    Get the host information from DDI
+
     :param str fqdn: The fully qualified domain name
     :param object session: A Requests session object.
     :param str url: The URL of the SolidServer.
-    :return:
+    :return: Returns the result as JSON
+    :rtype: str
     """
+    logger.debug('Getting host info for: %s', fqdn)
 
     r = session.get(url + "ip_address_list/WHERE/name='{0}'".format(fqdn))
 
@@ -81,10 +107,18 @@ def host(ctx):
 
 @host.command()
 @click.confirmation_option(prompt='Are you sure you want to delete the host?')
+@click.argument('hosts', envvar='DDI_HOST_HOSTS', nargs=-1)
 @click.pass_context
-def delete(ctx):
-    """Delete the host from DDI"""
-    click.echo("deleted host!")
+def delete(ctx, hosts):
+    """Delete the host(s) from DDI"""
+    logger.debug('Delete operation called on hosts: %s', hosts)
+    for host in hosts:
+        h = get_host(host, ctx.obj['session'], ctx.obj['url'])[0]
+        r = delete_host(h['ip_id'], ctx.obj['session'], ctx.obj['url'])
+        if ctx.obj['json']:
+            click.echo(json.dumps(r, indent=2, sort_keys=True))
+        else:
+            click.echo('Host: {} deleted.'.format(host))
 
 
 @host.command()
@@ -92,23 +126,25 @@ def delete(ctx):
 @click.pass_context
 def info(ctx, hosts):
     """Provide the DDI info on the given host(s)"""
-    url = ctx.obj['server'] + '/rest/'
 
     for host in hosts:
         click.echo('Host: {}'.format(host))
-        h = get_host(host, ctx.obj['session'], url)
-        click.echo(h)
+        h = get_host(host, ctx.obj['session'], ctx.obj['url'])
+        if ctx.obj['json']:
+            click.echo(json.dumps(h, indent=2, sort_keys=True))
+        else:
+            # TODO: Output for humans
+            click.echo("Host info here!")
 
 
 @host.command()
 @click.argument('hosts', envvar='DDI_HOST_HOSTS', nargs=-1)
 @click.pass_context
 def subnet(ctx, hosts):
-    """Provide the subnets for the given hosts"""
-    url = ctx.obj['server'] + '/rest/'
+    """Provide the subnet for the given host(s)"""
 
     for host in hosts:
         click.echo('Host: {}'.format(host))
-        d = get_subnets(host, ctx.obj['session'], url)
+        d = get_subnets(host, ctx.obj['session'], ctx.obj['url'])
         click.echo(d)
 

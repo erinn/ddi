@@ -8,11 +8,36 @@ import socket
 
 logger = logging.getLogger(__name__)
 
+
 class NotFoundError(Exception):
     pass
 
 
-def delete_host(ip_id: str, session: object, url:str):
+def add_host(ip: str, name: str, session: object,  url: str, site_name: str = "UCB",):
+    """
+    Add a host to DDI
+
+    :param str ip: The IP address to give to the host.
+    :param str name: The FQDN for the host, must be unique.
+    :param object session: The requests session object.
+    :param str url: The URL of the DDI server
+    :param str site_name: The site name to use, defaults to UCB.
+    :return:
+    """
+    logger.debug('Adding host: %s, with IP: %s', name, ip)
+
+    payload = {'name': name, 'hostaddr': ip, 'site_name': site_name}
+
+    r = session.post(url + 'ip_add', params=payload)
+
+    logger.debug('Add result code: %s, JSON: %s', r.status_code, r.json())
+
+    r.raise_for_status()
+
+    return r.json()
+
+
+def delete_host(ip_id: str, session: object, url: str):
     """
     Delete a given host by ip_id.
 
@@ -25,9 +50,10 @@ def delete_host(ip_id: str, session: object, url:str):
 
     payload = {'ip_id': ip_id}
 
-    r = session.delete(url + "ip_delete", params=payload)
+    r = session.delete(url + 'ip_delete', params=payload)
 
     logger.debug('Delete result code: %s, JSON: %s', r.status_code, r.json())
+
     r.raise_for_status()
 
     return r.json()
@@ -103,6 +129,21 @@ def unhexlify_address(hex_address):
 @click.pass_context
 def host(ctx):
     """Host based commands"""
+    pass
+
+
+@host.command()
+@click.argument('host', envvar='DDI_HOST_ADD_HOST', nargs=1)
+@click.argument('ip', envvar='DDI_HOST_ADD_IP', nargs=1)
+@click.pass_context
+def add(ctx, host, ip):
+    """Add a single host"""
+    logger.debug('Add operation call on host: %s', host)
+    r = add_host(host, ctx.obj['session'], ctx.obj['url'])
+    if ctx.obj['json']:
+        click.echo(json.dumps(r, indent=2, sort_keys=True))
+    else:
+        click.echo('Host: {} added with IP {}.'.format(host, ip))
 
 
 @host.command()

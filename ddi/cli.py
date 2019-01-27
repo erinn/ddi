@@ -36,7 +36,7 @@ def initiate_session(password: str, secure: bool, username: str):
 # TODO: use keyring to store passwords if possible
 @click.option('--password', '-p', prompt=True, hide_input=True, help="The DDI user's password.")
 @click.option('--server', '-s', prompt=True, help="The DDI server's URL to connect to.")
-@click.option('--username', '-u', help='The DDI username.')
+@click.option('--username', '-u', help='The DDI username.', required=True)
 @click.version_option(version=__version__)
 @click.pass_context
 def cli(ctx, debug, json, password, secure, server, username):

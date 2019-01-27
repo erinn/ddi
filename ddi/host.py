@@ -2,6 +2,7 @@ from ddi.cli import cli
 import binascii
 import click
 import logging
+import jsend
 import json
 import netaddr
 import socket
@@ -97,13 +98,11 @@ def get_subnets(fqdn: str, session: object, url: str):
     # If there is no start and end to the subnet we are usually dealing with
     # an external host.
     if host['subnet_start_ip_addr'] == '0' or host['subnet_end_ip_addr'] == '0':
-        d['subnet_cidr'] = netaddr.IPNetwork( d['ip_addr'] + '/32')
+        d['subnet_cidr'] = str(netaddr.IPNetwork(d['ip_addr'] + '/32'))
     else:
-        d['subnet_start_ip_addr'] = unhexlify_address(
-            host['subnet_start_ip_addr'])
+        d['subnet_start_ip_addr'] = unhexlify_address(host['subnet_start_ip_addr'])
         d['subnet_end_ip_addr'] = unhexlify_address(host['subnet_end_ip_addr'])
-        d['subnet_cidr'] = netaddr.iprange_to_cidrs(d['subnet_start_ip_addr'],
-                                                    d['subnet_end_ip_addr'])[0]
+        d['subnet_cidr'] = str(netaddr.iprange_to_cidrs(d['subnet_start_ip_addr'], d['subnet_end_ip_addr'])[0])
     return d
 
 
@@ -139,9 +138,10 @@ def host(ctx):
 def add(ctx, host, ip):
     """Add a single host"""
     logger.debug('Add operation call on host: %s', host)
-    r = add_host(host, ctx.obj['session'], ctx.obj['url'])
+    r = add_host(ip, host, ctx.obj['session'], ctx.obj['url'])
     if ctx.obj['json']:
-        click.echo(json.dumps(r, indent=2, sort_keys=True))
+        data = jsend.success(r)
+        click.echo(json.dumps(data, indent=2, sort_keys=True))
     else:
         click.echo('Host: {} added with IP {}.'.format(host, ip))
 
@@ -172,7 +172,8 @@ def info(ctx, hosts):
         click.echo('Host: {}'.format(host))
         h = get_host(host, ctx.obj['session'], ctx.obj['url'])
         if ctx.obj['json']:
-            click.echo(json.dumps(h, indent=2, sort_keys=True))
+            data = jsend.success(h[0])
+            click.echo(json.dumps(data, indent=2, sort_keys=True))
         else:
             # TODO: Output for humans
             click.echo("Host info here!")
@@ -187,5 +188,8 @@ def subnet(ctx, hosts):
     for host in hosts:
         click.echo('Host: {}'.format(host))
         d = get_subnets(host, ctx.obj['session'], ctx.obj['url'])
-        click.echo(d)
+        if ctx.obj['json']:
+            click.echo(json.dumps(d, indent=2, sort_keys=True))
+        else:
+            click.echo(d)
 

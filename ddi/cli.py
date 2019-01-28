@@ -106,7 +106,7 @@ def cli(ctx, debug, json, password, secure, server, username):
 
         Environment variables also work with nested commands. For example to
         pass in the list of hosts to delete you would set 'DDI_HOST_DELETE_HOSTS'
-        equal to a space seperated list of the hosts to delete.
+        equal to a space separated list of the hosts to delete.
 
         Passwords are a special case, they can be passed in on the command line,
         via a environment variable 'DDI_PASSWORD' or pulled in via the systems

@@ -15,11 +15,18 @@ class NotFoundError(Exception):
     pass
 
 
-def add_host(ip: str, name: str, session: object,  url: str, site_name: str = "UCB",):
+def add_host(building: str, department: str, contact: str,
+             ip: str, phone: str, name: str, session: object,  url: str,
+             comment=None, site_name: str = "UCB",):
     """
     Add a host to DDI.
 
+    :param str building: The UCB building the host is located in.
+    :param str contact: The UCB contact person for the host.
+    :param str comment: An optional comment.
+    :param str department: The UCB department the host is affiliated with.
     :param str ip: The IP address to give to the host.
+    :param str phone: The phone number associated with the host.
     :param str name: The FQDN for the host, must be unique.
     :param object session: The requests session object.
     :param str url: The URL of the DDI server.
@@ -27,17 +34,33 @@ def add_host(ip: str, name: str, session: object,  url: str, site_name: str = "U
     :return: The JSON result of the operation.
     :rtype: str
     """
-    logger.debug('Adding host: %s, with IP: %s', name, ip)
 
-    payload = {'name': name, 'hostaddr': ip, 'site_name': site_name}
+    ip_class_parameters = {'hostname': name.split('.')[0],
+                           'ucb_buildings': building,
+                           'ucb_dept_aff': department,
+                           'ucb_ph_no': phone,
+                           'ucb_resp_per': contact}
 
-    r = session.post(url + 'ip_add', params=payload)
+    # Add the comment if it was passed in
+    if comment:
+        ip_class_parameters['ucb_comment'] = comment
+
+    ip_class_parameters = urllib.parse.urlencode(ip_class_parameters)
+
+    payload = {'hostaddr': ip, 'name': name, 'site_name': site_name,
+               'ip_class_parameters': ip_class_parameters}
+
+    logger.debug('Add operation invoked on Host: %s with IP: %s, Building: %s, '
+                 'Department: %s, Contact: %s Phone: %s, and Payload: %s', name,
+                 ip, building, department, contact, phone, payload)
+
+    r = session.post(url + 'ip_add', json=payload)
 
     logger.debug('Add result code: %s, JSON: %s', r.status_code, r.json())
 
     r.raise_for_status()
 
-    return r.json()
+    return r.json()[0]
 
 
 def delete_host(ip_id: str, session: object, url: str):
@@ -60,7 +83,7 @@ def delete_host(ip_id: str, session: object, url: str):
 
     r.raise_for_status()
 
-    return r.json()
+    return r.json()[0]
 
 
 def get_host(fqdn: str, session: object, url: str):
@@ -174,20 +197,18 @@ def host(ctx):
 
 @host.command()
 @click.option('--building', '-b', help='The UCB building the host is in.', prompt=True, required=True)
-@click.option('--department', '-d', help='The UCB department the host belongs to.', prompt=True, required=True)
+@click.option('--comment', help='Additional comment for the host.')
 @click.option('--contact', '-c', help='The UCB contact for the host.', prompt=True, required=True)
+@click.option('--department', '-d', help='The UCB department the host belongs to.', prompt=True, required=True)
 @click.option('--ip', '-i', help='The IPv4 address for the host.', prompt=True, required=True)
 @click.option('--phone', '-p', help='The UCB phone number associated with the host.', prompt=True, required=True)
 @click.argument('host', envvar='DDI_HOST_ADD_HOST', nargs=1)
 @click.pass_context
-def add(ctx, building, department, contact, ip, phone, host):
+def add(ctx, building, comment, contact, department, ip, phone, host):
     """Add a single host entry into DDI"""
 
-    logger.debug('Add operation invoked on host: %s with ip: %s, building: %s, '
-                 'department: %s, contact: %s and phone: %s', host, ip, building,
-                 department, contact, phone)
+    r = add_host(building, department, contact, ip, phone, host, ctx.obj['session'], ctx.obj['url'], comment=comment)
 
-    r = add_host(ip, host, ctx.obj['session'], ctx.obj['url'])
     if ctx.obj['json']:
         data = jsend.success(r)
         click.echo(json.dumps(data, indent=2, sort_keys=True))

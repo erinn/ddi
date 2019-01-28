@@ -1,7 +1,7 @@
 #DDI
 DDI is a simple client to allow quick interaction with the SolidServer IPAM.
 
-## Release Procedure
+## RPM Release Procedure
 1. Bump __version__ in ddi/__init__.py
 2. run flit build
 3. Copy or link dist/ddi-\<version\>.tar.gz to rpmbuild/sources

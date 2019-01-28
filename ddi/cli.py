@@ -9,6 +9,7 @@ import requests
 logger = logging.getLogger(__name__)
 
 
+# TODO: test all password variations
 def cli_password(ctx, param, password):
     """
     This is a callback function that should only be used from the password
@@ -63,6 +64,8 @@ def initiate_session(password: str, secure: bool, username: str):
     :rtype: object
     """
 
+    logger.debug('Initiating session with TLS verification set to: %s.', secure)
+
     username = base64.b64encode(username.encode())
     password = base64.b64encode(password.encode())
 
@@ -72,6 +75,8 @@ def initiate_session(password: str, secure: bool, username: str):
     session = requests.Session()
     session.verify = secure
     session.headers = headers
+
+    logger.debug('Session initiated.')
 
     return session
 

@@ -16,6 +16,7 @@ colorama = "*"
 pyjsend = "*"
 keyring = "*"
 dbus-python = "*"
+secretstorage = "*"
 
 [requires]
 python_version = "3.7"

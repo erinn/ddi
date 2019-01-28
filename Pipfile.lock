@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "12c034a242d4bf46378d6fa82faeead14cf214b0be4c3dacc476bce9afbd6a98"
+            "sha256": "9c6eae4ea22806b14b737631b29bbdde68c1e7b12ea1437ca6575e5dd42e01fe"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -114,6 +114,13 @@
             ],
             "version": "==2.5"
         },
+        "dbus-python": {
+            "hashes": [
+                "sha256:abf12bbb765e300bf8e2a1b2f32f85949eab06998dbda127952c31cb63957b6f"
+            ],
+            "index": "pypi",
+            "version": "==1.2.8"
+        },
         "entrypoints": {
             "hashes": [
                 "sha256:589f874b313739ad35be6e0cd7efde2a4e9b6fea91edcc34e58ecbb8dbe56d19",
@@ -153,7 +160,6 @@
         },
         "pycparser": {
             "hashes": [
-                "sha256:68aa32012d54fc3bc32b7528ae690092670626e0a4c0bbd8d2a3bd43377d3596",
                 "sha256:a988718abfad80b6b157acce7bf130a30876d27603738ac39f140993246b25b3"
             ],
             "version": "==2.19"
@@ -193,11 +199,11 @@
         },
         "secretstorage": {
             "hashes": [
-                "sha256:20196abd1a9d1310df7573d58ca6e7ed9292218c98ca3638eea07beb16080343",
-                "sha256:29aa3cbd36dd5e54ac17d69161f9a150548f4ffba21fa8b5fdd5add854fe7d8b"
+                "sha256:20c797ae48a4419f66f8d28fc221623f11fc45b6828f96bdb1ad9990acb59f92",
+                "sha256:7a119fb52a88e398dbb22a4b3eb39b779bfbace7e4153b7bc6e5954d86282a8a"
             ],
             "markers": "sys_platform == 'linux' and python_version >= '3.5'",
-            "version": "==3.1.0"
+            "version": "==3.1.1"
         },
         "six": {
             "hashes": [

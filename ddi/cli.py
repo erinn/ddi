@@ -1,8 +1,55 @@
-from ddi import __version__
 import base64
 import click
+import ddi
+import getpass
+import keyring
 import logging
 import requests
+
+logger = logging.getLogger(__name__)
+
+
+def cli_password(ctx, param, password):
+    """
+    This is a callback function that should only be used from the password
+    option.
+
+    Because password logic is a bit complex we use this callback to handle the
+    multitude of options.
+    :param object ctx: The ctx object from click.
+    :param object param: The parameter object from click.
+    :param str password: The password consumed (or not) by click.
+    :return: The password or a non-zero exit.
+    :rtype: str
+    """
+
+    username = ctx.params['username']
+
+    logger.debug('Establishing password for user %s.', username)
+
+    if password:
+        logger.debug('Password established via the command line or environment '
+                     'variable.')
+        return password
+    else:
+        logger.debug('Password not passed in, attempting to extract from '
+                     'keyring location: %s.', ddi.__name__)
+        keyring.get_keyring()
+        password = keyring.get_password(ddi.__name__, username)
+        if password:
+            logger.debug('Password obtained from keyring.')
+            return password
+        else:
+            logger.debug('No password was obtained from the keyring.')
+
+            click.echo('No password was found in the environment variable, '
+                       'passed in on the command line, or found in the keyring. '
+                       'If you wish to use a password in the keyring please use '
+                       "'ddi password set'.")
+            ctx.exit(code=1)
+
+    # Should never be reached
+    return None
 
 
 def initiate_session(password: str, secure: bool, username: str):
@@ -30,14 +77,19 @@ def initiate_session(password: str, secure: bool, username: str):
 
 
 @click.group()
-@click.option('--debug', '-d', is_flag=True, default=False, help='Enable debug output.')
-@click.option('--secure', '-S', is_flag=True, default=True, help='Disable TLS verification.')
-@click.option('--json', '-j', is_flag=True, default=False, help='Output in JSON.')
+@click.option('--debug', '-d', default=False, help='Enable debug output.',
+              is_flag=True, show_default=True)
+@click.option('--secure', '-S', default=True, help='TLS verification.',
+              is_flag=True, show_default=True)
+@click.option('--json', '-j', default=False, help='Output in JSON.',
+              is_flag=True, show_default=True)
 # TODO: use keyring to store passwords if possible
-@click.option('--password', '-p', prompt=True, hide_input=True, help="The DDI user's password.")
-@click.option('--server', '-s', prompt=True, help="The DDI server's URL to connect to.")
-@click.option('--username', '-u', help='The DDI username.', required=True)
-@click.version_option(version=__version__)
+@click.option('--password', '-p', callback=cli_password, help="The DDI user's password.")
+@click.option('--server', '-s', help="The DDI server's URL to connect to.",
+              prompt=True, required=True)
+@click.option('--username', '-u', default=getpass.getuser(),
+              help='The DDI username.', is_eager=True, required=True, show_default=True)
+@click.version_option(version=ddi.__version__)
 @click.pass_context
 def cli(ctx, debug, json, password, secure, server, username):
     logger = logging.getLogger()
@@ -59,8 +111,4 @@ def cli(ctx, debug, json, password, secure, server, username):
     ctx.obj['server'] = server
     ctx.obj['session'] = session
     ctx.obj['url'] = ctx.obj['server'] + '/rest/'
-
-
-
-
-
+    ctx.obj['username'] = username

@@ -1,11 +1,12 @@
 from ddi.cli import cli
 import binascii
 import click
-import logging
 import jsend
 import json
+import logging
 import netaddr
 import socket
+import urllib.parse
 
 logger = logging.getLogger(__name__)
 
@@ -76,10 +77,14 @@ def get_host(fqdn: str, session: object, url: str):
 
     r = session.get(url + "ip_address_list/WHERE/name='{0}'".format(fqdn))
 
-    if r.status_code == 200:
-        return r.json()
-    else:
-        raise NotFoundError
+    r.raise_for_status()
+
+    json_response = r.json()
+    # Modify the URL Query String format to be a dict
+    for host in json_response:
+        host = query_string_to_dict(host)
+
+    return json_response
 
 
 def get_subnets(fqdn: str, session: object, url: str):
@@ -136,21 +141,51 @@ def unhexlify_address(hex_address: str):
     return socket.inet_ntoa(binascii.unhexlify(hex_address))
 
 
+def query_string_to_dict(host_info):
+    """
+    Turn a URL query string into a dictionary.
+
+    :param dict host_info: Host info from DDI with populated attributes
+    :return: Host info with attributes translaced from query string to dict
+    :rtype: dict
+    """
+
+    parameters = [
+        'ip_class_parameters',
+        'ip_class_parameters_inheritance_source',
+        'ip_class_parameters_properties',
+        'subnet_class_parameters',
+        'subnet_class_parameters_properties'
+    ]
+
+    for parameter in parameters:
+        p = host_info.get(parameter, '')
+        host_info[parameter] = urllib.parse.parse_qs(p)
+
+    return host_info
+
+
 @cli.group()
 @click.pass_context
 def host(ctx):
-    """Host based commands"""
+    """Host based commands."""
     pass
 
 
 @host.command()
+@click.option('--building', '-b', help='The UCB building the host is in.', prompt=True, required=True)
+@click.option('--department', '-d', help='The UCB department the host belongs to.', prompt=True, required=True)
+@click.option('--contact', '-c', help='The UCB contact for the host.', prompt=True, required=True)
+@click.option('--ip', '-i', help='The IPv4 address for the host.', prompt=True, required=True)
+@click.option('--phone', '-p', help='The UCB phone number associated with the host.', prompt=True, required=True)
 @click.argument('host', envvar='DDI_HOST_ADD_HOST', nargs=1)
-@click.argument('ip', envvar='DDI_HOST_ADD_IP', nargs=1)
 @click.pass_context
-def add(ctx, host, ip):
-    """Add a single host"""
+def add(ctx, building, department, contact, ip, phone, host):
+    """Add a single host entry into DDI"""
 
-    logger.debug('Add operation called on host: %s.', host)
+    logger.debug('Add operation invoked on host: %s with ip: %s, building: %s, '
+                 'department: %s, contact: %s and phone: %s', host, ip, building,
+                 department, contact, phone)
 
     r = add_host(ip, host, ctx.obj['session'], ctx.obj['url'])
     if ctx.obj['json']:
@@ -162,10 +197,10 @@ def add(ctx, host, ip):
 
 @host.command()
 @click.confirmation_option(prompt='Are you sure you want to delete the host?')
-@click.argument('hosts', envvar='DDI_HOST_HOSTS', nargs=-1)
+@click.argument('hosts', envvar='DDI_HOST_DELETE_HOSTS', nargs=-1)
 @click.pass_context
 def delete(ctx, hosts):
-    """Delete the host(s) from DDI"""
+    """Delete the host(s) from DDI."""
 
     logger.debug('Delete operation called on hosts: %s.', hosts)
 
@@ -180,29 +215,42 @@ def delete(ctx, hosts):
 
 
 @host.command()
-@click.argument('hosts', envvar='DDI_HOST_HOSTS', nargs=-1)
+@click.argument('hosts', envvar='DDI_HOST_INFO_HOSTS', nargs=-1)
 @click.pass_context
 def info(ctx, hosts):
-    """Provide the DDI info on the given host(s)"""
+    """Provide the DDI info on the given host(s)."""
 
     logger.debug('Info operation called on hosts: %s.', hosts)
 
     for host in hosts:
         click.echo('Host: {}'.format(host))
-        r = get_host(host, ctx.obj['session'], ctx.obj['url'])
+        r = get_host(host, ctx.obj['session'], ctx.obj['url'])[0]
         if ctx.obj['json']:
-            data = jsend.success(r[0])
+            data = jsend.success(r)
             click.echo(json.dumps(data, indent=2, sort_keys=True))
         else:
-            # TODO: Output for humans
-            click.echo("Host info here!")
+            click.echo('')
+            click.echo('Hostname: {}'.format(r['name']))
+            click.echo('Short Hostname: {}'
+                       .format(r['ip_class_parameters']['hostname'][0]))
+            click.echo('IP Address: {}'.format(unhexlify_address(r['ip_addr'])))
+            click.echo('CNAMES: {}'.format(r['ip_alias']))
+            click.echo('UCB Department: {}'
+                       .format(r['ip_class_parameters']['ucb_dept_aff'][0]))
+            click.echo('UCB Building: {}'.format(r['ip_class_parameters']['ucb_buildings'][0]))
+            click.echo('UCB Responsible Person: {}'
+                       .format(r['ip_class_parameters']['ucb_resp_per'][0]))
+            click.echo('UCB Phone Number: {}'
+                       .format(r['ip_class_parameters']['ucb_ph_no'][0]))
+            click.echo('')
+
 
 
 @host.command()
-@click.argument('hosts', envvar='DDI_HOST_HOSTS', nargs=-1)
+@click.argument('hosts', envvar='DDI_HOST_SUBNET_HOSTS', nargs=-1)
 @click.pass_context
 def subnet(ctx, hosts):
-    """Provide the subnet for the given host(s)"""
+    """Provide the subnet beginning, end, netmask, and CIDR for the given host(s)."""
 
     logger.debug('Subnet operation called on hosts: %s.', hosts)
 
@@ -212,5 +260,12 @@ def subnet(ctx, hosts):
             data = jsend.success(r)
             click.echo(json.dumps(data, indent=2, sort_keys=True))
         else:
-            click.echo(r)
+            click.echo('')
+            click.echo('Hostname: {}'.format(r['name']))
+            click.echo('Host IP: {}'.format(r['ip_addr']))
+            click.echo('Subnet Start: {}'.format(r['subnet_start_ip_addr']))
+            click.echo('Subnet End: {}'.format(r['subnet_end_ip_addr']))
+            click.echo('Subnet Netmask: {}'.format(r['subnet_netmask']))
+            click.echo('Subnet CIDR: {}'.format(r['subnet_cidr']))
+            click.echo('')
 

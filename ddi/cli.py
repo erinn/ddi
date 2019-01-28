@@ -82,21 +82,40 @@ def initiate_session(password: str, secure: bool, username: str):
 
 
 @click.group()
-@click.option('--debug', '-d', default=False, help='Enable debug output.',
+@click.option('--debug', '-D', default=False, help='Enable debug output.',
               is_flag=True, show_default=True)
 @click.option('--secure', '-S', default=True, help='TLS verification.',
               is_flag=True, show_default=True)
-@click.option('--json', '-j', default=False, help='Output in JSON.',
+@click.option('--json', '-J', default=False, help='Output in JSON.',
               is_flag=True, show_default=True)
-# TODO: use keyring to store passwords if possible
-@click.option('--password', '-p', callback=cli_password, help="The DDI user's password.")
+@click.option('--password', '-P', callback=cli_password, help="The DDI user's password.")
 @click.option('--server', '-s', help="The DDI server's URL to connect to.",
               prompt=True, required=True)
-@click.option('--username', '-u', default=getpass.getuser(),
+@click.option('--username', '-U', default=getpass.getuser(),
               help='The DDI username.', is_eager=True, required=True, show_default=True)
 @click.version_option(version=ddi.__version__)
 @click.pass_context
 def cli(ctx, debug, json, password, secure, server, username):
+    """DDI Commands
+
+        All options can either be taken in on the command line or via an
+        environment variable that is prefixed with 'DDI_'. For example to enable
+        debugging using an env variable set 'DDI_DEBUG=True'. Or to disable
+        TLS verification set DDI_SECURE=False. All options can be consumed
+        in this manner.
+
+        Environment variables also work with nested commands. For example to
+        pass in the list of hosts to delete you would set 'DDI_HOST_DELETE_HOSTS'
+        equal to a space seperated list of the hosts to delete.
+
+        Passwords are a special case, they can be passed in on the command line,
+        via a environment variable 'DDI_PASSWORD' or pulled in via the systems
+        keyring (OSX Keychain, Kwallet and similar on KDE/GNOME, or Windows
+        Credential Locker). In order to use the system keyring the password must
+        first be set in the keyring using 'ddi password set'. Ensure that the
+        default username is correct, or set it via -u or DDI_USERNAME before
+        setting the password.
+    """
     logger = logging.getLogger()
     handler = logging.StreamHandler()
     formatter = logging.Formatter(

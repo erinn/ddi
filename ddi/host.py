@@ -15,6 +15,20 @@ class NotFoundError(Exception):
     pass
 
 
+def add_cname(cname: str, host_data: dict, session:object, url: str):
+    """
+    Add a cname to a given host.
+
+    :param str cname:
+    :param dict host_data:
+    :param object session:
+    :param str url:
+    :return:
+
+    """
+    pass
+
+
 def add_host(building: str, department: str, contact: str,
              ip: str, phone: str, name: str, session: object,  url: str,
              comment=None, site_name: str = "UCB",):

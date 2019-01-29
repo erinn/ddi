@@ -103,6 +103,7 @@ def get_host(fqdn: str, session: object, url: str):
     r.raise_for_status()
 
     json_response = r.json()
+
     # Modify the URL Query String format to be a dict
     for host in json_response:
         host = query_string_to_dict(host)

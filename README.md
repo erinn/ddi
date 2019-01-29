@@ -2,6 +2,32 @@
 DDI is a simple client to allow quick interaction with the SolidServer IPAM. 
 Other backends should be possible but at the moment only SolidServer is supported.
 
+## Installation:
+In the future this program should be available as an RPM from RHEL >= 8 and
+current Fedora releases.
+
+This program forgoes using setuptools for [flit](https://pypi.org/project/flit/) so
+flit must first be installed in order to install ddi. Once flit is installed on 
+the system via whatever method your prefer, installation of ddi can happen in 
+a number of different ways. To install ddi local to your user, in the ddi base
+directory run: 
+
+    flit install --user 
+
+### Development Installation:
+To install ddi in a development environment 
+[pipenv](https://pypi.org/project/pipenv/) must first be installed. After pipenv
+is installed setup the environment and then run flit to symlink in the library
+like so:
+
+    pipenv install --dev
+    pipenv shell
+    flit install --symlink 
+    
+After that is done you will have a vitrualenv with the required packages installed
+and the ddi entrypoint will by symlinked with the code allowing you to develop
+and run against your development code.
+
 ## Usage:
 Make sure, at a minimum, you read the sections on setting your username, 
 setting your password, and setting the server address.

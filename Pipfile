@@ -5,17 +5,17 @@ verify_ssl = true
 
 [dev-packages]
 pytest = "*"
-flit = "*"
+pep8 = "*"
 
 [packages]
 click = "*"
-requests = "*"
-pyyaml = "*"
-netaddr = "*"
 colorama = "*"
-pyjsend = "*"
-keyring = "*"
 dbus-python = "*"
+flit = "*"
+keyring = "*"
+netaddr = "*"
+pyjsend = "*"
+requests = "*"
 secretstorage = "*"
 
 [requires]

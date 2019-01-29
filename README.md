@@ -8,7 +8,7 @@ setting your password, and setting the server address.
 
 ### Environment Variables:
 **ALL** options and arguments within ddi can be passed in as environment variables. 
-The basic syntax of this is PROGRAMENAME_OPTION/COMMAND. This will be more
+The basic syntax of this is PROGRAMENAME_OPTION or PROGRAMENAME_ARG. This will be more
 easily illustrated by examples:
 
     ddi --help
@@ -37,7 +37,7 @@ Or to set the server:
 
     export DDI_SERVER=https://ddi.example.com
 
-For parameters passed in you can use environment variables as well if you wish, 
+For arguments passed in you can use environment variables as well if you wish, 
 for example:
 
     $ddi host info --help
@@ -48,7 +48,7 @@ for example:
     Options:
       --help  Show this message and exit.
       
-To pass in the HOSTS you would do the following:
+To pass in the HOSTS arguments and an env variable you would do the following:
 
     export DDI_HOST_INFO_HOSTS=host1.example.com host2.example.com
 

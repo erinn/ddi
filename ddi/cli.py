@@ -66,8 +66,8 @@ def initiate_session(password: str, secure: bool, username: str):
 
     logger.debug('Initiating session with TLS verification set to: %s.', secure)
 
-    username = base64.b64encode(username.encode())
-    password = base64.b64encode(password.encode())
+    username = base64.b64encode(username.encode()).decode()
+    password = base64.b64encode(password.encode()).decode()
 
     headers = {'X-IPM-Username': username,
                'X-IPM-Password': password}

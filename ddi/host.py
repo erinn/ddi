@@ -81,7 +81,7 @@ def delete_host(ip_id: str, session: object, url: str):
     """
     Delete a given host by ip_id.
 
-    :param str ip_id: The IP ID from the DDI database,
+    :param str ip_id: The IP ID from the DDI database.
     :param object session: The requests session object.
     :param str url: The URL of the DDI server.
     :return: The JSON result of the operation.
@@ -104,9 +104,9 @@ def get_host(fqdn: str, session: object, url: str):
     """
     Get the host information from DDI.
 
-    :param str fqdn: The fully qualified domain name
+    :param str fqdn: The fully qualified domain name of the host to locate in DDI.
     :param object session: The requests session object.
-    :param str url: TThe URL of the DDI server.
+    :param str url: The full URL of the DDI server.
     :return: The JSON result of the operation.
     :rtype: str
     """
@@ -183,8 +183,8 @@ def query_string_to_dict(host_info):
     """
     Turn a URL query string into a dictionary.
 
-    :param dict host_info: Host info from DDI with populated attributes
-    :return: Host info with attributes translaced from query string to dict
+    :param dict host_info: Host info from DDI with populated attributes.
+    :return: Host info with attributes translated from query string to dict.
     :rtype: dict
     """
 
@@ -279,7 +279,6 @@ def info(ctx, hosts):
             click.echo('UCB Phone Number: {}'
                        .format(r['ip_class_parameters']['ucb_ph_no'][0]))
             click.echo('')
-
 
 
 @host.command()

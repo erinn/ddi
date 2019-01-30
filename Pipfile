@@ -7,11 +7,12 @@ verify_ssl = true
 pytest = "*"
 pep8 = "*"
 pylint = "*"
+betamax = "*"
+betamax-serializers = "*"
 
 [packages]
 click = "*"
 colorama = "*"
-dbus-python = "*"
 flit = "*"
 keyring = "*"
 netaddr = "*"

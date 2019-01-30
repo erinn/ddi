@@ -125,34 +125,31 @@ def get_host(fqdn: str, session: object, url: str):
     return json_response
 
 
-def get_subnets(fqdn: str, session: object, url: str):
+def get_subnets(host_info: dict):
     """
     Get the subnets on which a given host exists.
 
-    :param str fqdn: The FQDN for the host to get the subnet information for.
-    :param object session: The requests session object.
-    :param str url: The URL for the DDI server.
+    :param dict host_info: The host info as returned by get_host().
     :return: A dictionary with the subnet information.
     :rtype: dict
     """
-    d = {}
-    host = get_host(fqdn, session, url)[0]
 
-    d['name'] = host['name']
-    d['ip_addr'] = unhexlify_address(host['ip_addr'])
+    host_info['ip_addr'] = unhexlify_address(host_info['ip_addr'])
 
     # If there is no start and end to the subnet we are usually dealing with
     # an external host.
-    if host['subnet_start_ip_addr'] == '0' or host['subnet_end_ip_addr'] == '0':
-        d['subnet_cidr'] = str(netaddr.IPNetwork(d['ip_addr'] + '/32'))
+    if host_info['subnet_start_ip_addr'] == '0' or \
+            host_info['subnet_end_ip_addr'] == '0':
+        host_info['subnet_cidr'] = str(netaddr.IPNetwork(host_info['ip_addr'] + '/32'))
+        host_info['subnet_mask'] = '255.255.255.255'
     else:
-        d['subnet_start_ip_addr'] = unhexlify_address(host['subnet_start_ip_addr'])
-        d['subnet_end_ip_addr'] = unhexlify_address(host['subnet_end_ip_addr'])
-        subnet = netaddr.iprange_to_cidrs(d['subnet_start_ip_addr'],
-                                          d['subnet_end_ip_addr'])[0]
-        d['subnet_cidr'] = str(subnet)
-        d['subnet_netmask'] = str(subnet.netmask)
-    return d
+        host_info['subnet_start_ip_addr'] = unhexlify_address(host_info['subnet_start_ip_addr'])
+        host_info['subnet_end_ip_addr'] = unhexlify_address(host_info['subnet_end_ip_addr'])
+        subnet = netaddr.iprange_to_cidrs(host_info['subnet_start_ip_addr'],
+                                          host_info['subnet_end_ip_addr'])[0]
+        host_info['subnet_cidr'] = str(subnet)
+        host_info['subnet_netmask'] = str(subnet.netmask)
+    return host_info
 
 
 def hexlify_address(ipv4_address: str):
@@ -261,6 +258,7 @@ def info(ctx, hosts):
 
     for host in hosts:
         r = get_host(host, ctx.obj['session'], ctx.obj['url'])[0]
+        r = get_subnets(r)
         if ctx.obj['json']:
             data = jsend.success(r)
             click.echo(json.dumps(data, indent=2, sort_keys=True))
@@ -269,8 +267,12 @@ def info(ctx, hosts):
             click.echo(f"Hostname: {r['name']}")
             click.echo('Short Hostname: '
                        f"{r['ip_class_parameters']['hostname'][0]}")
-            click.echo(f"IP Address: {unhexlify_address(r['ip_addr'])}")
+            click.echo(f"IP Address: {r['ip_addr']}")
             click.echo(f"CNAMES: {r['ip_alias']}")
+            click.echo(f"Subnet Start: {r['subnet_start_ip_addr']}")
+            click.echo(f"Subnet End: {r['subnet_end_ip_addr']}")
+            click.echo(f"Subnet Netmask: {r['subnet_netmask']}")
+            click.echo(f"Subnet CIDR: {r['subnet_cidr']}")
             click.echo('UCB Department: '
                        f"{r['ip_class_parameters']['ucb_dept_aff'][0]}")
             click.echo('UCB Building: '
@@ -280,28 +282,3 @@ def info(ctx, hosts):
             click.echo(f"UCB Phone Number: "
                        f"{r['ip_class_parameters']['ucb_ph_no'][0]}")
             click.echo('')
-
-
-@host.command()
-@click.argument('hosts', envvar='DDI_HOST_SUBNET_HOSTS', nargs=-1)
-@click.pass_context
-def subnet(ctx, hosts):
-    """Provide the subnet beginning, end, netmask, and CIDR for the given host(s)."""
-
-    logger.debug('Subnet operation called on hosts: %s.', hosts)
-
-    for host in hosts:
-        r = get_subnets(host, ctx.obj['session'], ctx.obj['url'])
-        if ctx.obj['json']:
-            data = jsend.success(r)
-            click.echo(json.dumps(data, indent=2, sort_keys=True))
-        else:
-            click.echo('')
-            click.echo(f"Hostname: {r['name']}")
-            click.echo(f"Host IP: {r['ip_addr']}")
-            click.echo(f"Subnet Start: {r['subnet_start_ip_addr']}")
-            click.echo(f"Subnet End: {r['subnet_end_ip_addr']}")
-            click.echo(f"Subnet Netmask: {r['subnet_netmask']}")
-            click.echo(f"Subnet CIDR: {r['subnet_cidr']}")
-            click.echo('')
-

@@ -1,6 +1,5 @@
 from betamax import Betamax
 from betamax_serializers.pretty_json import PrettyJSONSerializer
-from click.testing import CliRunner
 from ddi.cli import initiate_session
 from ddi.host import *
 

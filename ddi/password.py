@@ -14,9 +14,9 @@ def password(ctx):
     pass
 
 
-@password.command()
+@password.command(name='set')
 @click.pass_context
-def set(ctx):
+def set_(ctx):
     """Set the password in the system keyring."""
     logger.debug('Setting password for user: %s', ctx.obj['username'])
     p = click.prompt(f"{ddi.__name__} password for {ctx.obj['username']}",

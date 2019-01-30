@@ -9,6 +9,7 @@ pep8 = "*"
 pylint = "*"
 betamax = "*"
 betamax-serializers = "*"
+coverage = "*"
 
 [packages]
 click = "*"

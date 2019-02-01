@@ -1,4 +1,5 @@
 from ddi.cli import cli
+import ddi.cname
 import ddi.host
 import ddi.password
 

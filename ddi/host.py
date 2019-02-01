@@ -1,4 +1,5 @@
 from ddi.cli import cli
+
 import binascii
 import click
 import jsend
@@ -12,20 +13,6 @@ logger = logging.getLogger(__name__)
 
 
 class NotFoundError(Exception):
-    pass
-
-
-def add_cname(cname: str, host_data: dict, session:object, url: str):
-    """
-    Add a cname to a given host.
-
-    :param str cname:
-    :param dict host_data:
-    :param object session:
-    :param str url:
-    :return:
-
-    """
     pass
 
 
@@ -70,7 +57,7 @@ def add_host(building: str, department: str, contact: str,
 
     r = session.post(url + 'ip_add', json=payload)
 
-    logger.debug('Add result code: %s, JSON: %s', r.status_code, r.json())
+    logger.debug('Add host result code: %s, JSON: %s', r.status_code, r.json())
 
     r.raise_for_status()
 
@@ -112,7 +99,8 @@ def get_host(fqdn: str, session: object, url: str):
     """
     logger.debug('Getting host info for: %s', fqdn)
 
-    r = session.get(url + f"ip_address_list/WHERE/name='{fqdn}'")
+    payload = {'WHERE': f"name='{fqdn}'"}
+    r = session.get(url + 'ip_address_list', params=payload)
 
     r.raise_for_status()
 
@@ -125,31 +113,32 @@ def get_host(fqdn: str, session: object, url: str):
     return json_response
 
 
-def get_subnets(host_info: dict):
+def get_subnets(host_data: dict):
     """
     Get the subnets on which a given host exists.
 
-    :param dict host_info: The host info as returned by get_host().
+    :param dict host_data: The host info as returned by get_host().
     :return: A dictionary with the subnet information.
     :rtype: dict
     """
 
-    host_info['ip_addr'] = unhexlify_address(host_info['ip_addr'])
+    host_data['ip_addr'] = unhexlify_address(host_data['ip_addr'])
 
     # If there is no start and end to the subnet we are usually dealing with
     # an external host.
-    if host_info['subnet_start_ip_addr'] == '0' or \
-            host_info['subnet_end_ip_addr'] == '0':
-        host_info['subnet_cidr'] = str(netaddr.IPNetwork(host_info['ip_addr'] + '/32'))
-        host_info['subnet_mask'] = '255.255.255.255'
+    if host_data['subnet_start_ip_addr'] == '0' or \
+            host_data['subnet_end_ip_addr'] == '0':
+        host_data['subnet_cidr'] = str(netaddr.IPNetwork(host_data['ip_addr'] + '/32'))
+        host_data['subnet_mask'] = '255.255.255.255'
     else:
-        host_info['subnet_start_ip_addr'] = unhexlify_address(host_info['subnet_start_ip_addr'])
-        host_info['subnet_end_ip_addr'] = unhexlify_address(host_info['subnet_end_ip_addr'])
-        subnet = netaddr.iprange_to_cidrs(host_info['subnet_start_ip_addr'],
-                                          host_info['subnet_end_ip_addr'])[0]
-        host_info['subnet_cidr'] = str(subnet)
-        host_info['subnet_netmask'] = str(subnet.netmask)
-    return host_info
+        host_data['subnet_start_ip_addr'] = unhexlify_address(host_data['subnet_start_ip_addr'])
+        host_data['subnet_end_ip_addr'] = unhexlify_address(host_data['subnet_end_ip_addr'])
+        subnet = netaddr.iprange_to_cidrs(host_data['subnet_start_ip_addr'],
+                                          host_data['subnet_end_ip_addr'])[0]
+        host_data['subnet_cidr'] = str(subnet)
+        host_data['subnet_netmask'] = str(subnet.netmask)
+
+    return host_data
 
 
 def hexlify_address(ipv4_address: str):

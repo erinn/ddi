@@ -20,6 +20,7 @@ Betamax.register_serializer(PrettyJSONSerializer)
 
 config = Betamax.configure()
 config.cassette_library_dir = 'tests/integration/cassettes'
+config.default_cassette_options['serialize_with'] = 'prettyjson'
 config.default_cassette_options['placeholders'] = [
     {
         'placeholder': '<PASSWORD>',
@@ -55,7 +56,7 @@ def client():
 
 def test_add_host(client):
     recorder = Betamax(client)
-    with recorder.use_cassette('ddi_add_host', serialize_with='prettyjson'):
+    with recorder.use_cassette('ddi_add_host'):
         result = add_host(building='TEST', department='TEST',
                           contact='Test User', ip='172.23.23.4',
                           phone='555-1212', name=ddi_host, session=client,
@@ -65,7 +66,7 @@ def test_add_host(client):
 
 def test_get_host(client):
     recorder = Betamax(client)
-    with recorder.use_cassette('ddi_get_host', serialize_with='prettyjson'):
+    with recorder.use_cassette('ddi_get_host'):
         result = get_host(fqdn=ddi_host, session=client, url=ddi_url)
 
     assert isinstance(result, list)
@@ -75,16 +76,8 @@ def test_get_host(client):
 def test_delete_host(client):
     ip_id = '389885'
     recorder = Betamax(client)
-    with recorder.use_cassette('ddi_delete_host', serialize_with='prettyjson'):
+    with recorder.use_cassette('ddi_delete_host'):
         result = delete_host(ip_id=ip_id, session=client, url=ddi_url)
 
     assert isinstance(result, dict)
     assert result['ret_oid'] == ip_id
-
-
-def test_hexlify_address():
-    assert hexlify_address('127.0.0.1') == b'7f000001'
-
-
-def test_unhexlify_address():
-    assert unhexlify_address('7f000001') == '127.0.0.1'

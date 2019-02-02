@@ -1,6 +1,6 @@
 from ddi.cli import cli
 from ddi.host import get_host
-
+from ddi.utilites import query_string_to_dict
 import click
 import jsend
 import json
@@ -29,11 +29,8 @@ def add_cname(cname: str, host_data: dict, session: object, url: str):
 
     aliases = host_data['ip_alias'].split(',')
 
-    if cname not in aliases:
-        aliases.append(cname)
-        host_data['ip_alias'] = ','.join(aliases)
-
-    r = session.put(url + 'ip_add', json=host_data)
+    payload = {'ip_id': host_data['ip_id'], 'ip_name': cname}
+    r = session.put(url + 'ip_alias_add', json=payload)
 
     r.raise_for_status()
 
@@ -72,13 +69,13 @@ def cname(ctx):
 
 
 @cname.command()
-@click.argument('cname', envvar='DDI_CNAME_ADD_CNAME', nargs=1)
 @click.argument('host', envvar='DDI_CNAME_ADD_HOST', nargs=1)
+@click.argument('cname', envvar='DDI_CNAME_ADD_CNAME', nargs=1)
 @click.pass_context
-def add(ctx, cname, host):
+def add(ctx, host, cname):
     """Add a single CNAME entry to an existing host"""
 
-    host_data = get_host(host, ctx.obj['session'], ctx.obj['url'])
+    host_data = get_host(host, ctx.obj['session'], ctx.obj['url'])[0]
     r = add_cname(cname, host_data, ctx.obj['session'], ctx.obj['url'])
 
     if ctx.obj['json']:

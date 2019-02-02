@@ -1,12 +1,10 @@
 from ddi.cli import cli
+from ddi.utilites import get_subnets, query_string_to_dict
 
-import binascii
 import click
 import jsend
 import json
 import logging
-import netaddr
-import socket
 import urllib.parse
 
 logger = logging.getLogger(__name__)
@@ -106,87 +104,7 @@ def get_host(fqdn: str, session: object, url: str):
 
     json_response = r.json()
 
-    # Modify the URL Query String format to be a dict
-    for host in json_response:
-        host = query_string_to_dict(host)
-
     return json_response
-
-
-def get_subnets(host_data: dict):
-    """
-    Get the subnets on which a given host exists.
-
-    :param dict host_data: The host info as returned by get_host().
-    :return: A dictionary with the subnet information.
-    :rtype: dict
-    """
-
-    host_data['ip_addr'] = unhexlify_address(host_data['ip_addr'])
-
-    # If there is no start and end to the subnet we are usually dealing with
-    # an external host.
-    if host_data['subnet_start_ip_addr'] == '0' or \
-            host_data['subnet_end_ip_addr'] == '0':
-        host_data['subnet_cidr'] = str(netaddr.IPNetwork(host_data['ip_addr'] + '/32'))
-        host_data['subnet_mask'] = '255.255.255.255'
-    else:
-        host_data['subnet_start_ip_addr'] = unhexlify_address(host_data['subnet_start_ip_addr'])
-        host_data['subnet_end_ip_addr'] = unhexlify_address(host_data['subnet_end_ip_addr'])
-        subnet = netaddr.iprange_to_cidrs(host_data['subnet_start_ip_addr'],
-                                          host_data['subnet_end_ip_addr'])[0]
-        host_data['subnet_cidr'] = str(subnet)
-        host_data['subnet_netmask'] = str(subnet.netmask)
-
-    return host_data
-
-
-def hexlify_address(ipv4_address: str):
-    """
-    Convert a dotted quad IPv4 address to hex.
-
-    :param str ipv4_address: The IPv4 address.
-    :return: The hex address.
-    :rtype: str
-    """
-
-    return binascii.hexlify(socket.inet_aton(ipv4_address))
-
-
-def unhexlify_address(hex_address: str):
-    """
-    Convert a hex address into a dotted quad address.
-
-    :param str hex_address: The address as hex.
-    :return: The address as a dotted quad.
-    :rtype: str
-    """
-
-    return socket.inet_ntoa(binascii.unhexlify(hex_address))
-
-
-def query_string_to_dict(host_info):
-    """
-    Turn a URL query string into a dictionary.
-
-    :param dict host_info: Host info from DDI with populated attributes.
-    :return: Host info with attributes translated from query string to dict.
-    :rtype: dict
-    """
-
-    parameters = [
-        'ip_class_parameters',
-        'ip_class_parameters_inheritance_source',
-        'ip_class_parameters_properties',
-        'subnet_class_parameters',
-        'subnet_class_parameters_properties'
-    ]
-
-    for parameter in parameters:
-        p = host_info.get(parameter, '')
-        host_info[parameter] = urllib.parse.parse_qs(p)
-
-    return host_info
 
 
 @cli.group()
@@ -197,12 +115,20 @@ def host(ctx):
 
 
 @host.command()
-@click.option('--building', '-b', help='The UCB building the host is in.', prompt=True, required=True)
+@click.option('--building', '-b', help='The UCB building the host is in.',
+              prompt=True, required=True)
 @click.option('--comment', help='Additional comment for the host.')
-@click.option('--contact', '-c', help='The UCB contact for the host.', prompt=True, required=True)
-@click.option('--department', '-d', help='The UCB department the host belongs to.', prompt=True, required=True)
-@click.option('--ip', '-i', help='The IPv4 address for the host.', prompt=True, required=True)
-@click.option('--phone', '-p', help='The UCB phone number associated with the host.', prompt=True, required=True)
+@click.option('--contact', '-c', help='The UCB contact for the host.',
+              prompt=True, required=True)
+@click.option('--department', '-d',
+              help='The UCB department the host belongs to.', prompt=True,
+              required=True)
+@click.option('--ip', '-i',
+              help='The IPv4 address for the host as a dotted quad.',
+              prompt=True, required=True)
+@click.option('--phone', '-p',
+              help='The UCB phone number associated with the host.',
+              prompt=True, required=True)
 @click.argument('host', envvar='DDI_HOST_ADD_HOST', nargs=1)
 @click.pass_context
 def add(ctx, building, comment, contact, department, ip, phone, host):
@@ -247,11 +173,12 @@ def info(ctx, hosts):
 
     for host in hosts:
         r = get_host(host, ctx.obj['session'], ctx.obj['url'])[0]
-        r = get_subnets(r)
         if ctx.obj['json']:
             data = jsend.success(r)
             click.echo(json.dumps(data, indent=2, sort_keys=True))
         else:
+            r = get_subnets(r)
+            r = query_string_to_dict(r)
             click.echo('')
             click.echo(f"Hostname: {r['name']}")
             click.echo('Short Hostname: '

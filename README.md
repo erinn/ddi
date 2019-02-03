@@ -46,7 +46,7 @@ easily illustrated by examples:
       -J, --json           Output in JSON.  [default: False]
       -P, --password TEXT  The DDI user's password.
       -s, --server TEXT    The DDI server's URL to connect to.  [required]
-      -U, --username TEXT  The DDI username.  [default: looneytr; required]
+      -U, --username TEXT  The DDI username.  [default: <USERNAME>; required]
       --version            Show the version and exit.
       --help               Show this message and exit.
     

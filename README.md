@@ -1,3 +1,5 @@
+![image](https://travis-ci.org/erinn/ddi.svg?branch=master)
+
 # DDI
 DDI is a simple client to allow quick interaction with the SolidServer IPAM. 
 Other backends should be possible but at the moment only SolidServer is supported.

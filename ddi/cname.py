@@ -108,6 +108,7 @@ def add(ctx, host, cname):
 
 
 @cname.command()
+@click.confirmation_option(prompt='Are you sure you want to delete this CNAME?')
 @click.argument('cname', envvar='DDI_CNAME_DELETE_CNAME', nargs=1)
 @click.pass_context
 def delete(ctx, cname):

@@ -60,7 +60,7 @@ def test_add_host(client):
         result = add_host(building='TEST', department='TEST',
                           contact='Test User', ip='172.23.23.4',
                           phone='555-1212', name=ddi_host, session=client,
-                          url=ddi_url)
+                          url=ddi_url, comment='Test Comment')
         assert isinstance(result, dict)
 
 

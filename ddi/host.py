@@ -189,12 +189,14 @@ def info(ctx, hosts):
             click.echo(f"Subnet End: {r['subnet_end_ip_addr']}")
             click.echo(f"Subnet Netmask: {r['subnet_netmask']}")
             click.echo(f"Subnet CIDR: {r['subnet_cidr']}")
-            click.echo('UCB Department: '
-                       f"{r['ip_class_parameters']['ucb_dept_aff'][0]}")
             click.echo('UCB Building: '
                        f"{r['ip_class_parameters']['ucb_buildings'][0]}")
-            click.echo('UCB Responsible Person: '
-                       f"{r['ip_class_parameters']['ucb_resp_per'][0]}")
+            click.echo('UCB Comment: '
+                       f"{r['ip_class_parameters']['ucb_comment'][0]}")
+            click.echo('UCB Department: '
+                       f"{r['ip_class_parameters']['ucb_dept_aff'][0]}")
             click.echo(f"UCB Phone Number: "
                        f"{r['ip_class_parameters']['ucb_ph_no'][0]}")
+            click.echo('UCB Responsible Person: '
+                       f"{r['ip_class_parameters']['ucb_resp_per'][0]}")
             click.echo('')

@@ -7,10 +7,10 @@ import base64
 import os
 import pytest
 
-ddi_cname = os.environ.get('DDI_CNAME', 'ddi-test-cname.example.com')
+ddi_cname = os.environ.get('DDI_CNAME', 'ddi-test-cname.int.example.com')
 ddi_host = os.environ.get('DDI_HOST', 'ddi-test-host.example.com')
 ddi_password = os.environ.get('DDI_PASSWORD', 'test_password')
-ddi_server = os.environ.get('DDI_SERVER', 'httpd://ddi.example.com')
+ddi_server = os.environ.get('DDI_SERVER', 'https://ddi.example.com')
 ddi_site_name = os.environ.get('DDI_SITE_NAME', 'EXAMPLE')
 ddi_url = ddi_server + '/rest/'
 ddi_username = os.environ.get('DDI_USERNAME', 'test_user')

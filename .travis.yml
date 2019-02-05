@@ -5,6 +5,7 @@ python:
 install:
   - 'pip install pipenv'
   - 'pipenv install --dev'
+  - 'flit install'
 
 script: 'py.test --cov=./'
 

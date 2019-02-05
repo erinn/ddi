@@ -1,4 +1,4 @@
-![image](https://travis-ci.org/erinn/ddi.svg?branch=master)
+[![image](https://travis-ci.org/erinn/ddi.svg?branch=master)](https://travis-ci.org/erinn/ddi)
 [![codecov](https://codecov.io/gh/erinn/ddi/branch/master/graph/badge.svg)](https://codecov.io/gh/erinn/ddi)
 
 # DDI
@@ -10,11 +10,11 @@ In the future this program should be available as an RPM from RHEL >= 8 and
 current Fedora releases.
 
 This program forgoes using setuptools for [flit](https://pypi.org/project/flit/) so
-flit must first be installed in order to install ddi. Once flit is installed on 
-the system via whatever method your prefer, installation of ddi can happen in 
-a number of different ways. To install ddi local to your user, in the ddi base
-directory run: 
+flit must first be installed in order to install ddi. 
 
+To install flit and ddi local to your user, in the ddi base directory run: 
+
+    pip install --user flit
     flit install --user 
 
 ### Development Installation:

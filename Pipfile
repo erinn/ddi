@@ -10,6 +10,8 @@ pylint = "*"
 betamax = "*"
 betamax-serializers = "*"
 coverage = "*"
+codecov = "*"
+pytest-cov = "*"
 
 [packages]
 click = "*"

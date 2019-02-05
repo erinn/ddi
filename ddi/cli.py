@@ -96,7 +96,7 @@ def initiate_session(password: str, secure: bool, username: str):
 @click.version_option(version=ddi.__version__)
 @click.pass_context
 def cli(ctx, debug, json, password, secure, server, username):
-    """DDI Commands
+    """DDI Commands.
 
         All options can either be taken in on the command line or via an
         environment variable that is prefixed with 'DDI_'. For example to enable

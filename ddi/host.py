@@ -132,7 +132,7 @@ def host(ctx):
 @click.argument('host', envvar='DDI_HOST_ADD_HOST', nargs=1)
 @click.pass_context
 def add(ctx, building, comment, contact, department, ip, phone, host):
-    """Add a single host entry into DDI"""
+    """Add a single host entry into DDI."""
 
     r = add_host(building, department, contact, ip, phone, host,
                  ctx.obj['session'], ctx.obj['url'], comment=comment)

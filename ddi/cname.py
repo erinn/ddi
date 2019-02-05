@@ -87,7 +87,7 @@ def get_cname_info(cname: str, session:object, url: str):
 @cli.group()
 @click.pass_context
 def cname(ctx):
-    """CNAME based commands"""
+    """CNAME based commands."""
 
 
 @cname.command()
@@ -95,7 +95,7 @@ def cname(ctx):
 @click.argument('cname', envvar='DDI_CNAME_ADD_CNAME', nargs=1)
 @click.pass_context
 def add(ctx, host, cname):
-    """Add a single CNAME entry to an existing host"""
+    """Add a single CNAME entry to an existing host."""
 
     host_data = get_host(host, ctx.obj['session'], ctx.obj['url'])[0]
     r = add_cname(cname, host_data, ctx.obj['session'], ctx.obj['url'])
@@ -112,7 +112,7 @@ def add(ctx, host, cname):
 @click.argument('cname', envvar='DDI_CNAME_DELETE_CNAME', nargs=1)
 @click.pass_context
 def delete(ctx, cname):
-    """Delete a single CNAME entry for a host"""
+    """Delete a single CNAME entry for a host."""
     host_data = get_cname_info(cname, ctx.obj['session'], ctx.obj['url'])[0]
     r = delete_cname(cname, host_data, ctx.obj['session'], ctx.obj['url'])
 
@@ -127,7 +127,7 @@ def delete(ctx, cname):
 @click.argument('cname', envvar='DDI_CNAME_INFO_CNAME', nargs=1)
 @click.pass_context
 def info(ctx, cname):
-    """Retrieve the host info associated with a CNAME"""
+    """Retrieve the host info associated with a CNAME."""
 
     host_data = get_cname_info(cname, ctx.obj['session'], ctx.obj['url'])[0]
 

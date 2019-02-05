@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 @cli.group()
 @click.pass_context
 def password(ctx):
-    """Password commands"""
+    """DDI user password commands."""
     pass
 
 

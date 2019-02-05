@@ -1,4 +1,5 @@
 ![image](https://travis-ci.org/erinn/ddi.svg?branch=master)
+[![codecov](https://codecov.io/gh/erinn/ddi/branch/master/graph/badge.svg)](https://codecov.io/gh/erinn/ddi)
 
 # DDI
 DDI is a simple client to allow quick interaction with the SolidServer IPAM. 

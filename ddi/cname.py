@@ -77,7 +77,7 @@ def get_cname_info(cname: str, session:object, url: str):
 
     r = session.get(url + 'ip_address_list', params=payload)
 
-    r.raise_for_status
+    r.raise_for_status()
 
     logger.debug('Get cname result code: %s, JSON: %s', r.status_code, r.json())
 

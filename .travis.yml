@@ -7,7 +7,7 @@ install:
   - 'pipenv install --dev'
   - 'flit install'
 
-script: 'py.test --cov=./'
+script: 'py.test --cov-report=xml --cov=./ tests/'
 
 after_success:
   - codecov

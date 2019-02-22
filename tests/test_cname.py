@@ -4,15 +4,18 @@ from ddi.cli import initiate_session
 from ddi.cname import *
 
 import base64
+import jsend
 import os
 import pytest
+import url_normalize
 
 ddi_cname = os.environ.get('DDI_CNAME', 'ddi-test-cname.int.example.com')
 ddi_host = os.environ.get('DDI_HOST', 'ddi-test-host.example.com')
 ddi_password = os.environ.get('DDI_PASSWORD', 'test_password')
 ddi_server = os.environ.get('DDI_SERVER', 'https://ddi.example.com')
 ddi_site_name = os.environ.get('DDI_SITE_NAME', 'EXAMPLE')
-ddi_url = ddi_server + '/rest/'
+ddi_url = url_normalize.url_normalize(ddi_server)
+print(ddi_url)
 ddi_username = os.environ.get('DDI_USERNAME', 'test_user')
 domain_name = os.environ.get('DOMAINNAME', 'example.com')
 
@@ -58,11 +61,12 @@ def client():
 def test_add_cname(client):
     recorder = Betamax(client)
     with recorder.use_cassette('ddi_add_cname'):
-        host_data = get_host(fqdn=ddi_host, session=client, url=ddi_url)[0]
+        host_data = get_host(fqdn=ddi_host, session=client, url=ddi_url)
         result = add_cname(cname=ddi_cname, host_data=host_data, session=client,
                            url=ddi_url)
 
-        assert isinstance(result, list)
+        assert isinstance(result, dict)
+        assert jsend.is_success(result)
 
 
 def test_get_cname(client):
@@ -77,8 +81,9 @@ def test_get_cname(client):
 def test_delete_cname(client):
     recorder = Betamax(client)
     with recorder.use_cassette('ddi_delete_cname'):
-        host_data = get_host(fqdn=ddi_host, session=client, url=ddi_url)[0]
+        host_data = get_host(fqdn=ddi_host, session=client, url=ddi_url)
         result = delete_cname(cname=ddi_cname, host_data=host_data,
                               session=client, url=ddi_url)
 
-    assert isinstance(result, list)
+    assert isinstance(result, dict)
+    assert jsend.is_success(result)

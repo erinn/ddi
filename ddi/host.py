@@ -1,5 +1,5 @@
 from ddi.cli import cli
-from ddi.utilites import get_subnets, query_string_to_dict
+from ddi.utilites import echo_host_info, get_exceptions
 
 import click
 import jsend
@@ -53,7 +53,7 @@ def add_host(building: str, department: str, contact: str,
                  'Department: %s, Contact: %s Phone: %s, and Payload: %s', name,
                  ip, building, department, contact, phone, payload)
 
-    r = session.post(url + 'ip_add', json=payload)
+    r = session.post(url + 'rest/ip_add', json=payload)
 
     logger.debug('Add host result code: %s, JSON: %s', r.status_code, r.json())
 
@@ -76,7 +76,7 @@ def delete_host(ip_id: str, session: object, url: str):
 
     payload = {'ip_id': ip_id}
 
-    r = session.delete(url + 'ip_delete', params=payload)
+    r = session.delete(url + 'rest/ip_delete', params=payload)
 
     logger.debug('Delete result code: %s, JSON: %s', r.status_code, r.json())
 
@@ -98,13 +98,11 @@ def get_host(fqdn: str, session: object, url: str):
     logger.debug('Getting host info for: %s', fqdn)
 
     payload = {'WHERE': f"name='{fqdn}'"}
-    r = session.get(url + 'ip_address_list', params=payload)
+    r = session.get(url + 'rest/ip_address_list', params=payload)
 
-    r.raise_for_status()
+    result = get_exceptions(r)
 
-    json_response = r.json()
-
-    return json_response
+    return result
 
 
 @cli.group()
@@ -172,31 +170,10 @@ def info(ctx, hosts):
     logger.debug('Info operation called on hosts: %s.', hosts)
 
     for host in hosts:
-        r = get_host(host, ctx.obj['session'], ctx.obj['url'])[0]
+        r = get_host(host, ctx.obj['session'], ctx.obj['url'])
         if ctx.obj['json']:
-            data = jsend.success(r)
-            click.echo(json.dumps(data, indent=2, sort_keys=True))
+            click.echo(json.dumps(r, indent=2, sort_keys=True))
+        elif jsend.is_success(r):
+            echo_host_info(r)
         else:
-            r = get_subnets(r)
-            r = query_string_to_dict(r)
-            click.echo('')
-            click.echo(f"Hostname: {r['name']}")
-            click.echo('Short Hostname: '
-                       f"{r['ip_class_parameters']['hostname'][0]}")
-            click.echo(f"IP Address: {r['ip_addr']}")
-            click.echo(f"CNAMES: {r['ip_alias']}")
-            click.echo(f"Subnet Start: {r['subnet_start_ip_addr']}")
-            click.echo(f"Subnet End: {r['subnet_end_ip_addr']}")
-            click.echo(f"Subnet Netmask: {r['subnet_netmask']}")
-            click.echo(f"Subnet CIDR: {r['subnet_cidr']}")
-            click.echo('UCB Building: '
-                       f"{r['ip_class_parameters']['ucb_buildings'][0]}")
-            click.echo('UCB Comment: '
-                       f"{r['ip_class_parameters']['ucb_comment'][0]}")
-            click.echo('UCB Department: '
-                       f"{r['ip_class_parameters']['ucb_dept_aff'][0]}")
-            click.echo(f"UCB Phone Number: "
-                       f"{r['ip_class_parameters']['ucb_ph_no'][0]}")
-            click.echo('UCB Responsible Person: '
-                       f"{r['ip_class_parameters']['ucb_resp_per'][0]}")
-            click.echo('')
+            click.echo('Request failed, enable debugging for more.')

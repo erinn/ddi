@@ -4,14 +4,16 @@ from ddi.cli import initiate_session
 from ddi.host import *
 
 import base64
+import jsend
 import os
 import pytest
+import url_normalize
 
 ddi_host = os.environ.get('DDI_HOST', 'ddi-test-host.example.com')
 ddi_password = os.environ.get('DDI_PASSWORD', 'test_password')
 ddi_server = os.environ.get('DDI_SERVER', 'https://ddi.example.com')
 ddi_site_name = os.environ.get('DDI_SITE_NAME', 'EXAMPLE')
-ddi_url = ddi_server + '/rest/'
+ddi_url = url_normalize.url_normalize(ddi_server)
 ddi_username = os.environ.get('DDI_USERNAME', 'test_user')
 domain_name = os.environ.get('DOMAINNAME', 'example.com')
 
@@ -69,8 +71,9 @@ def test_get_host(client):
     with recorder.use_cassette('ddi_get_host'):
         result = get_host(fqdn=ddi_host, session=client, url=ddi_url)
 
-    assert isinstance(result, list)
-    assert result[0]['name'] == ddi_host
+    assert isinstance(result, dict)
+    assert jsend.is_success(result)
+    assert result['data']['results'][0]['name'] == ddi_host
 
 
 def test_delete_host(client):

@@ -1,5 +1,7 @@
 from ddi.cli import cli
 from ddi.host import get_host
+from ddi.utilites import get_exceptions
+
 import click
 import jsend
 import json
@@ -24,16 +26,21 @@ def add_cname(cname: str, host_data: dict, session: object, url: str):
     :rtype: list
 
     """
-    logger.debug('Add cname: %s called on host: %s', cname, host_data['name'])
+    if jsend.is_success(host_data):
+        host_data = host_data['data']['results'][0]
+    else:
+        return jsend.error('No host data found to add CNAME to.')
+
+    logger.debug('Add CNAME: %s called on host: %s', cname, host_data['name'])
 
     payload = {'ip_id': host_data['ip_id'], 'ip_name': cname}
-    r = session.put(url + 'ip_alias_add', json=payload)
+    r = session.put(url + 'rest/ip_alias_add', json=payload)
 
-    r.raise_for_status()
+    result = get_exceptions(r)
 
-    logger.debug('Add cname result code: %s, JSON: %s', r.status_code, r.json())
+    logger.debug('Add cname result code: %s, JSON: %s', r.status_code, result)
 
-    return r.json()
+    return result
 
 
 def delete_cname(cname: str, host_data: dict, session: object, url: str):
@@ -47,21 +54,25 @@ def delete_cname(cname: str, host_data: dict, session: object, url: str):
     :return: The response as JSON
     :rtype: list
     """
+    if jsend.is_success(host_data):
+        host_data = host_data['data']['results'][0]
+    else:
+        return jsend.error('No host data found to delete CNAME from.')
 
     logger.debug('Delete cname: %s called on host: %s', cname, host_data['name'])
 
     payload = {'ip_id': host_data['ip_id'], 'ip_name': cname}
 
-    r = session.delete(url + 'ip_alias_delete', json=payload)
+    r = session.delete(url + 'rest/ip_alias_delete', json=payload)
 
-    r.raise_for_status()
+    result = get_exceptions(r)
 
-    logger.debug('Delete cname result code: %s, JSON: %s', r.status_code, r.json())
+    logger.debug('Delete cname result code: %s, JSON: %s', r.status_code, result)
 
-    return r.json()
+    return result
 
 
-def get_cname_info(cname: str, session:object, url: str):
+def get_cname_info(cname: str, session: object, url: str):
     """
     Get host information associated with a given CNAME.
 
@@ -75,7 +86,7 @@ def get_cname_info(cname: str, session:object, url: str):
 
     payload = {'WHERE': f"ip_alias like '%{cname}%'"}
 
-    r = session.get(url + 'ip_address_list', params=payload)
+    r = session.get(url + 'rest/ip_address_list', params=payload)
 
     r.raise_for_status()
 
@@ -137,4 +148,3 @@ def info(ctx, cname):
     else:
         click.echo(f"Hostname: {host_data['name']}.")
         click.echo(f"CNAMES: {host_data['ip_alias']}")
-

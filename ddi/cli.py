@@ -5,6 +5,7 @@ import getpass
 import keyring
 import logging
 import requests
+import url_normalize
 
 logger = logging.getLogger(__name__)
 
@@ -86,7 +87,7 @@ def initiate_session(password: str, secure: bool, username: str):
               is_flag=True, show_default=True)
 @click.option('--secure', '-S', default=True, help='TLS verification.',
               is_flag=True, show_default=True)
-@click.option('--json', '-J', default=False, help='Output in JSON.',
+@click.option('--json', '-J', default=False, help='Output in JSON using the JSEND standard.',
               is_flag=True, show_default=True)
 @click.option('--password', '-P', callback=cli_password, help="The DDI user's password.")
 @click.option('--server', '-s', help="The DDI server's URL to connect to.",
@@ -132,7 +133,7 @@ def cli(ctx, debug, json, password, secure, server, username):
     ctx.ensure_object(dict)
     ctx.obj['debug'] = debug
     ctx.obj['json'] = json
-    ctx.obj['server'] = server
+    ctx.obj['server'] = url_normalize.url_normalize(server)
     ctx.obj['session'] = session
-    ctx.obj['url'] = ctx.obj['server'] + '/rest/'
+    ctx.obj['url'] = ctx.obj['server']
     ctx.obj['username'] = username

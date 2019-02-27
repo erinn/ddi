@@ -80,11 +80,11 @@ def test_get_host(client):
 
 
 def test_delete_host(client):
-    ip_id = '389885'
     recorder = Betamax(client)
 
     with recorder.use_cassette('ddi_delete_host'):
-        result = delete_host(ip_id=ip_id, session=client, url=ddi_url)
+        result = delete_host(fqdn=ddi_host, session=client, url=ddi_url)
 
     assert isinstance(result, dict)
-    assert result['ret_oid'] == ip_id
+    assert jsend.is_success(result)
+    assert 'ret_oid' in result['data']['results'][0]

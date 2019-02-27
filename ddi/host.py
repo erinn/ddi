@@ -62,27 +62,32 @@ def add_host(building: str, department: str, contact: str,
     return r.json()[0]
 
 
-def delete_host(ip_id: str, session: object, url: str):
+def delete_host(fqdn: str, session: object, url: str):
     """
     Delete a given host by ip_id.
 
-    :param str ip_id: The IP ID from the DDI database.
+    :param str fqdn: The FQDN of the host object to delete.
     :param object session: The requests session object.
     :param str url: The URL of the DDI server.
     :return: The JSON result of the operation.
     :rtype: str
     """
-    logger.debug('Deleting host ip_id: %s', ip_id)
 
-    payload = {'ip_id': ip_id}
+    h = get_host(fqdn, session, url)
 
-    r = session.delete(url + 'rest/ip_delete', params=payload)
+    if jsend.is_success(h):
+        ip_id = h['data']['results'][0]['ip_id']
 
-    logger.debug('Delete result code: %s, JSON: %s', r.status_code, r.json())
+        logger.debug('Deleting host: %s with ip_id: %s', fqdn, ip_id)
 
-    r.raise_for_status()
+        payload = {'ip_id': ip_id}
+        r = session.delete(url + 'rest/ip_delete', params=payload)
 
-    return r.json()[0]
+        result = get_exceptions(r)
+
+        return result
+    else:
+        return h
 
 
 def get_host(fqdn: str, session: object, url: str):
@@ -154,13 +159,13 @@ def delete(ctx, hosts):
     logger.debug('Delete operation called on hosts: %s.', hosts)
 
     for host in hosts:
-        h = get_host(host, ctx.obj['session'], ctx.obj['url'])[0]
-        r = delete_host(h['ip_id'], ctx.obj['session'], ctx.obj['url'])
+        r = delete_host(host, ctx.obj['session'], ctx.obj['url'])
         if ctx.obj['json']:
-            data = jsend.success(r)
-            click.echo(json.dumps(data, indent=2, sort_keys=True))
-        else:
+            click.echo(json.dumps(r, indent=2, sort_keys=True))
+        elif jsend.is_success(r):
             click.echo(f'Host: {host} deleted.')
+        else:
+            click.echo(f'Deletion of host:{host} failed.')
 
 
 @host.command()

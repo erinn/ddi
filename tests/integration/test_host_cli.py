@@ -92,7 +92,7 @@ def test_host_add(client):
                                         obj=jobj)
 
     assert cli_result.exit_code == 0
-    assert ('Host: ' + ddi_host + ' added') in cli_result.stdout
+    assert f'Host: {ddi_host} added' in cli_result.stdout
 
     assert cli_json_result.exit_code == 0
     assert '"data"' in cli_json_result.stdout
@@ -116,7 +116,7 @@ def test_host_info(client):
         failed_result = runner.invoke(host, ['info', errant_ddi_host], obj=obj)
 
     assert cli_result.exit_code == 0
-    assert ('Hostname: ' + ddi_host) in cli_result.stdout
+    assert f'Hostname: {ddi_host}' in cli_result.stdout
 
     assert cli_json_result.exit_code == 0
     assert '"data"' in cli_json_result.stdout
@@ -132,5 +132,27 @@ def test_host_delete(client):
     to the fact that you can't get a hosts' information after the host
     has been deleted :).
     """
+    runner = CliRunner()
+    result = runner.invoke(host, ['info', '--help'])
+    assert result.exit_code == 0
+    assert 'Usage:' in result.output
 
+    recorder = Betamax(client)
+
+    obj = {'session': client, 'url': ddi_url, 'json': False}
+    jobj ={'session': client, 'url': ddi_url, 'json': True}
+
+    with recorder.use_cassette('cli_host_delete'):
+        cli_result = runner.invoke(host, ['delete', ddi_host, '--yes'], obj=obj)
+        cli_json_result = runner.invoke(host, ['delete', ddi_host, '--yes'], obj=jobj)
+        failed_result = runner.invoke(host, ['delete', errant_ddi_host, '--yes'], obj=obj)
+
+    assert cli_result.exit_code == 0
+    assert f'Host: {ddi_host} deleted.' in cli_result.stdout
+
+    assert cli_json_result.exit_code == 0
+    assert '"data"' in cli_json_result.stdout
+
+    assert failed_result.exit_code == 1
+    assert "Request failed" in failed_result.stdout
 

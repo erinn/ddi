@@ -165,7 +165,7 @@ def delete(ctx, hosts):
 @click.argument('hosts', envvar='DDI_HOST_INFO_HOSTS', nargs=-1)
 @click.pass_context
 def info(ctx, hosts):
-    """Provide the DDI info on the given host(s)."""
+    """Provide information on the given host(s)."""
 
     logger.debug('Info operation called on hosts: %s.', hosts)
 

@@ -1,0 +1,169 @@
+{
+  "http_interactions": [
+    {
+      "recorded_at": "2019-02-27T20:41:41",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"hostaddr\": \" 172.23.23.4\", \"name\": \"<DDI_HOST>\", \"site_name\": \"UCB\", \"ip_class_parameters\": \"hostname=ddi-test&ucb_buildings=+TEST&ucb_dept_aff=+TEST&ucb_ph_no=+555-1212&ucb_resp_per=+Test+User&ucb_comment=%22Test+Comment%22\"}"
+        },
+        "headers": {
+          "Content-Length": [
+            "243"
+          ],
+          "Content-Type": [
+            "application/json"
+          ],
+          "X-IPM-Password": [
+            "<PASSWORD>"
+          ],
+          "X-IPM-Username": [
+            "<LOGIN>"
+          ]
+        },
+        "method": "POST",
+        "uri": "<DDI_SERVER>/rest/ip_add"
+      },
+      "response": {
+        "body": {
+          "encoding": "UTF-8",
+          "string": "{\"errno\":\"12\",\"errmsg\":\"Bad parameter format\",\"severity\":\"error\",\"parameters\":\"hostaddr\",\"param_format\":\"ipv4 address\",\"param_value\":\" 172.23.23.4\",\"category\":\"ip_add\"}"
+        },
+        "headers": {
+          "Cache-Control": [
+            "no-store, no-cache, must-revalidate"
+          ],
+          "Connection": [
+            "close"
+          ],
+          "Content-Length": [
+            "168"
+          ],
+          "Content-Type": [
+            "application/json; charset=UTF-8"
+          ],
+          "Date": [
+            "Wed, 27 Feb 2019 20:41:41 GMT"
+          ],
+          "Expires": [
+            "Thu, 19 Nov 1981 08:52:00 GMT"
+          ],
+          "Pragma": [
+            "no-cache"
+          ],
+          "Server": [
+            "Apache"
+          ],
+          "Set-Cookie": [
+            "PHPSESSID=s38u4dnooqb6otqbh46flda3im; path=/; secure; HttpOnly"
+          ],
+          "Strict-Transport-Security": [
+            "max-age=31536000; includeSubDomains"
+          ],
+          "Vary": [
+            "Accept-Encoding,User-Agent"
+          ],
+          "X-Content-Type-Options": [
+            "nosniff",
+            "nosniff"
+          ],
+          "X-Frame-Options": [
+            "SAMEORIGIN",
+            "deny"
+          ],
+          "X-XSS-Protection": [
+            "1; mode=block"
+          ]
+        },
+        "status": {
+          "code": 400,
+          "message": "Bad Request"
+        },
+        "url": "<DDI_SERVER>/rest/ip_add"
+      }
+    },
+    {
+      "recorded_at": "2019-02-27T20:41:42",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"hostaddr\": \" 172.23.23.4\", \"name\": \"<DDI_HOST>\", \"site_name\": \"UCB\", \"ip_class_parameters\": \"hostname=ddi-test&ucb_buildings=+TEST&ucb_dept_aff=+TEST&ucb_ph_no=+555-1212&ucb_resp_per=+Test+User&ucb_comment=%22Test+Comment%22\"}"
+        },
+        "headers": {
+          "Content-Length": [
+            "243"
+          ],
+          "Content-Type": [
+            "application/json"
+          ],
+          "Cookie": [
+            "PHPSESSID=s38u4dnooqb6otqbh46flda3im"
+          ],
+          "X-IPM-Password": [
+            "<PASSWORD>"
+          ],
+          "X-IPM-Username": [
+            "<LOGIN>"
+          ]
+        },
+        "method": "POST",
+        "uri": "<DDI_SERVER>/rest/ip_add"
+      },
+      "response": {
+        "body": {
+          "encoding": "UTF-8",
+          "string": "{\"errno\":\"12\",\"errmsg\":\"Bad parameter format\",\"severity\":\"error\",\"parameters\":\"hostaddr\",\"param_format\":\"ipv4 address\",\"param_value\":\" 172.23.23.4\",\"category\":\"ip_add\"}"
+        },
+        "headers": {
+          "Cache-Control": [
+            "no-store, no-cache, must-revalidate"
+          ],
+          "Connection": [
+            "close"
+          ],
+          "Content-Length": [
+            "168"
+          ],
+          "Content-Type": [
+            "application/json; charset=UTF-8"
+          ],
+          "Date": [
+            "Wed, 27 Feb 2019 20:41:42 GMT"
+          ],
+          "Expires": [
+            "Thu, 19 Nov 1981 08:52:00 GMT"
+          ],
+          "Pragma": [
+            "no-cache"
+          ],
+          "Server": [
+            "Apache"
+          ],
+          "Strict-Transport-Security": [
+            "max-age=31536000; includeSubDomains"
+          ],
+          "Vary": [
+            "Accept-Encoding,User-Agent"
+          ],
+          "X-Content-Type-Options": [
+            "nosniff",
+            "nosniff"
+          ],
+          "X-Frame-Options": [
+            "SAMEORIGIN",
+            "deny"
+          ],
+          "X-XSS-Protection": [
+            "1; mode=block"
+          ]
+        },
+        "status": {
+          "code": 400,
+          "message": "Bad Request"
+        },
+        "url": "<DDI_SERVER>/rest/ip_add"
+      }
+    }
+  ],
+  "recorded_with": "betamax/0.8.1"
+}

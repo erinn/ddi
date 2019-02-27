@@ -23,7 +23,7 @@ domain_name = os.environ.get('DOMAINNAME', 'example.com')
 Betamax.register_serializer(PrettyJSONSerializer)
 
 config = Betamax.configure()
-config.cassette_library_dir = 'tests/integration/cassettes'
+config.cassette_library_dir = 'tests/cassettes'
 config.default_cassette_options['serialize_with'] = 'prettyjson'
 config.default_cassette_options['placeholders'] = [
     {
@@ -53,7 +53,7 @@ config.default_cassette_options['placeholders'] = [
 ]
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture()
 def client():
     return initiate_session(ddi_password, False, ddi_username)
 

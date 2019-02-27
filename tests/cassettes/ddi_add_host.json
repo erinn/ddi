@@ -1,11 +1,11 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2019-02-04T09:42:56",
+      "recorded_at": "2019-02-27T21:06:39",
       "request": {
         "body": {
           "encoding": "utf-8",
-          "string": "{\"hostaddr\": \"172.23.23.4\", \"name\": \"<DDI_HOST>\", \"site_name\": \"EXAMPLE\", \"ip_class_parameters\": \"hostname=ddi-test&ucb_buildings=TEST&ucb_dept_aff=TEST&ucb_ph_no=555-1212&ucb_resp_per=Test+User&ucb_comment=Test+Comment\"}"
+          "string": "{\"hostaddr\": \"172.23.23.4\", \"name\": \"<DDI_HOST>\", \"site_name\": \"UCB\", \"ip_class_parameters\": \"hostname=ddi-test&ucb_buildings=TEST&ucb_dept_aff=TEST&ucb_ph_no=555-1212&ucb_resp_per=Test+User&ucb_comment=Test+Comment\"}"
         },
         "headers": {
           "Content-Length": [
@@ -40,7 +40,7 @@
             "application/json; charset=UTF-8"
           ],
           "Date": [
-            "Mon, 04 Feb 2019 09:42:55 GMT"
+            "Wed, 27 Feb 2019 21:06:38 GMT"
           ],
           "Expires": [
             "Thu, 19 Nov 1981 08:52:00 GMT"
@@ -52,7 +52,7 @@
             "Apache"
           ],
           "Set-Cookie": [
-            "PHPSESSID=77upmbrkeoe71446r9i9jplkt9; path=/; secure; HttpOnly"
+            "PHPSESSID=44ijkb5dtg4nt6ksvau7kfa77o; path=/; secure; HttpOnly"
           ],
           "Strict-Transport-Security": [
             "max-age=31536000; includeSubDomains"

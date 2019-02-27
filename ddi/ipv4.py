@@ -62,7 +62,7 @@ def ipv4(ctx):
 @click.argument('ips', envvar='DDI_IP_INFO_IPS', nargs=-1)
 @click.pass_context
 def info(ctx, ips):
-    """Provide the DDI info on the given IPv4 address(es)."""
+    """Provide information on the given IPv4 address(es)."""
 
     logger.debug('Info operation called on IPs: %s.', ips)
     for ip in ips:

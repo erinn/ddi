@@ -1,0 +1,157 @@
+{
+  "http_interactions": [
+    {
+      "recorded_at": "2019-02-27T20:23:33",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": ""
+        },
+        "headers": {
+          "X-IPM-Password": [
+            "<PASSWORD>"
+          ],
+          "X-IPM-Username": [
+            "<LOGIN>"
+          ]
+        },
+        "method": "GET",
+        "uri": "<DDI_SERVER>/rest/ip_address_list?WHERE=name%3D%27<DDI_HOST>%27"
+      },
+      "response": {
+        "body": {
+          "encoding": "UTF-8",
+          "string": "[{\"errno\":\"0\",\"type\":\"ip\",\"free_start_ip_addr\":\"ac171704\",\"free_end_ip_addr\":\"ac171704\",\"free_scope_size\":\"0\",\"ip_id\":\"389885\",\"site_is_template\":\"0\",\"site_name\":\"UCB\",\"tree_level\":\"0\",\"tree_path\":\"UCB#\",\"tree_id_path\":\"#2#\",\"ip_addr\":\"ac171704\",\"name\":\"<DDI_HOST>\",\"mac_addr\":\"EIP:5c58091fd192f4.82251165\",\"ip_class_name\":\"\",\"parent_subnet_id\":\"2018\",\"parent_subnet_name\":\"172.16.0.0\\/12\",\"parent_subnet_size\":\"1048576\",\"parent_vlsm_subnet_id\":\"0\",\"parent_subnet_class_name\":\"UCB\\/UCB-Blocks\",\"parent_subnet_start_ip_addr\":\"ac100000\",\"parent_subnet_end_ip_addr\":\"ac1fffff\",\"subnet_name\":\"cu-biot-seel4\",\"pool_name\":\"\",\"site_id\":\"2\",\"subnet_id\":\"1832\",\"subnet_start_ip_addr\":\"ac171700\",\"subnet_end_ip_addr\":\"ac1717ff\",\"subnet_size\":\"256\",\"subnet_is_terminal\":\"1\",\"lock_network_broadcast\":\"1\",\"pool_class_name\":\"\",\"pool_id\":\"0\",\"pool_read_only\":\"0\",\"pool_row_enabled\":\"0\",\"iplnetdev_name\":\"#\",\"iplnetdev_id\":\"0\",\"iplport_name\":\"\",\"iplport_slotnumber\":\"\",\"iplport_portnumber\":\"\",\"iplport_ifvlan\":\"\",\"hostiface_name\":\"#\",\"hostiface_id\":\"0\",\"hostdev_name\":\"#\",\"hostdev_id\":\"0\",\"dhcphost_id\":\"0\",\"dhcplease_id\":\"0\",\"last_seen\":\"0\",\"dhcplease_end_time\":\"0\",\"site_description\":\"\",\"site_class_name\":\"\",\"subnet_class_name\":\"UCB\\/UCB-DHCP-Subnet\",\"pool_size\":\"\",\"pool_start_ip_addr\":\"#\",\"pool_end_ip_addr\":\"#\",\"ip_alias\":\"ddi-test-cname.int.example.com\",\"multistatus\":\"\",\"tag_pool_dhcprange\":\"0\",\"tag_container_dhcpstatic\":\"0\",\"ip_class_parameters\":\"dns_view_name=%23all&rev_dns_view_name=0&ipv6_mapping=0&dns_id=2&dns_update=1&dhcp_failover_name=failover-smart.dhcp&dhcpstatic=0&rev_dns_id=2&domain=int.example.com&ucb_comment=Test%20Comment&ucb_dept_aff=TEST&ucb_ph_no=555-1212&ucb_resp_per=Test%20User&hostname=ddi-test&ucb_buildings=TEST&subnet_name=cu-biot-seel4&ucb_subnet_comment=SEEL%20Floor%204&gateway=172.23.23.1&__eip_description=&use_ipam_name=1\",\"ip_class_parameters_properties\":\"dns_view_name=inherited,restrict&rev_dns_view_name=inherited,restrict&ipv6_mapping=inherited,restrict&dns_id=inherited,restrict&dns_update=inherited,restrict&dhcp_failover_name=inherited,restrict&dhcpstatic=inherited,restrict&rev_dns_id=inherited,restrict&domain=inherited,restrict&ucb_comment=set,restrict&ucb_dept_aff=set,restrict&ucb_ph_no=set,restrict&ucb_resp_per=set,restrict&hostname=set,restrict&ucb_buildings=set,restrict&subnet_name=inherited,restrict&ucb_subnet_comment=inherited,restrict&gateway=inherited,restrict&__eip_description=inherited,restrict&use_ipam_name=inherited,restrict\",\"ip_class_parameters_inheritance_source\":\"dns_view_name=real_network,2018&rev_dns_view_name=real_site,2&ipv6_mapping=real_site,2&dns_id=real_network,2018&dns_update=real_network,2018&dhcp_failover_name=real_network,1832&dhcpstatic=real_site,2&rev_dns_id=real_network,2018&domain=real_network,2018&ucb_comment=real_ip,389885&ucb_dept_aff=real_ip,389885&ucb_ph_no=real_ip,389885&ucb_resp_per=real_ip,389885&hostname=real_ip,389885&ucb_buildings=real_ip,389885&subnet_name=real_network,1832&ucb_subnet_comment=real_network,1832&gateway=real_network,1832&__eip_description=real_network,2018&use_ipam_name=real_site,2\",\"pool_class_parameters\":\"\",\"pool_class_parameters_properties\":\"\",\"site_class_parameters\":\"dns_view_name=0&rev_dns_view_name=0&ipv6_mapping=0&dns_id=0&dns_update=0&dhcp_failover_name=0&dhcpstatic=0&use_ipam_name=1\",\"site_class_parameters_properties\":\"dns_view_name=set,propagate&rev_dns_view_name=set,propagate&ipv6_mapping=set,propagate&dns_id=set,propagate&dns_update=set,propagate&dhcp_failover_name=set,propagate&dhcpstatic=set,propagate&use_ipam_name=set,propagate\",\"subnet_class_parameters\":\"dns_view_name=%23all&rev_dns_view_name=0&ipv6_mapping=0&dns_id=2&dns_update=1&dhcp_failover_name=failover-smart.dhcp&dhcpstatic=0&rev_dns_id=2&domain=int.example.com&domain_list=ad.example.com%3Bexample.com%3Bcs.example.com%3Bdiv.example.com%3Bint.example.com%3Brc.example.com%3Bresnet.example.com%3Bzoo.example.com&ucb_buildings=SEEL&subnet_name=cu-biot-seel4&ucb_subnet_comment=SEEL%20Floor%204&gateway=172.23.23.1&__eip_description=&use_ipam_name=1\",\"subnet_class_parameters_properties\":\"dns_view_name=inherited,propagate&rev_dns_view_name=inherited,propagate&ipv6_mapping=inherited,propagate&dns_id=inherited,propagate&dns_update=inherited,propagate&dhcp_failover_name=set,propagate&dhcpstatic=inherited,propagate&rev_dns_id=inherited,propagate&domain=inherited,propagate&domain_list=inherited,propagate&ucb_buildings=set,propagate&subnet_name=set,propagate&ucb_subnet_comment=set,propagate&gateway=set,propagate&__eip_description=inherited,propagate&use_ipam_name=inherited,propagate\"}]"
+        },
+        "headers": {
+          "Cache-Control": [
+            "no-store, no-cache, must-revalidate"
+          ],
+          "Content-Length": [
+            "4610"
+          ],
+          "Content-Type": [
+            "application/json; charset=UTF-8"
+          ],
+          "Date": [
+            "Wed, 27 Feb 2019 20:23:33 GMT"
+          ],
+          "Expires": [
+            "Thu, 19 Nov 1981 08:52:00 GMT"
+          ],
+          "Pragma": [
+            "no-cache"
+          ],
+          "Server": [
+            "Apache"
+          ],
+          "Set-Cookie": [
+            "PHPSESSID=3a0275htaa17dt0877vvtvnhou; path=/; secure; HttpOnly"
+          ],
+          "Strict-Transport-Security": [
+            "max-age=31536000; includeSubDomains"
+          ],
+          "Vary": [
+            "Accept-Encoding,User-Agent"
+          ],
+          "X-Content-Type-Options": [
+            "nosniff",
+            "nosniff"
+          ],
+          "X-Frame-Options": [
+            "SAMEORIGIN",
+            "deny"
+          ],
+          "X-XSS-Protection": [
+            "1; mode=block"
+          ]
+        },
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "url": "<DDI_SERVER>/rest/ip_address_list?WHERE=name%3D%27<DDI_HOST>%27"
+      }
+    },
+    {
+      "recorded_at": "2019-02-27T20:23:34",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": "{\"ip_id\": \"389885\", \"ip_name\": \"ddi-test-cname.int.example.com\"}"
+        },
+        "headers": {
+          "Content-Length": [
+            "65"
+          ],
+          "Content-Type": [
+            "application/json"
+          ],
+          "Cookie": [
+            "PHPSESSID=3a0275htaa17dt0877vvtvnhou"
+          ],
+          "X-IPM-Password": [
+            "<PASSWORD>"
+          ],
+          "X-IPM-Username": [
+            "<LOGIN>"
+          ]
+        },
+        "method": "DELETE",
+        "uri": "<DDI_SERVER>/rest/ip_alias_delete"
+      },
+      "response": {
+        "body": {
+          "encoding": "UTF-8",
+          "string": "[{\"ret_oid\":\"761003\"}]"
+        },
+        "headers": {
+          "Cache-Control": [
+            "no-store, no-cache, must-revalidate"
+          ],
+          "Content-Length": [
+            "22"
+          ],
+          "Content-Type": [
+            "application/json; charset=UTF-8"
+          ],
+          "Date": [
+            "Wed, 27 Feb 2019 20:23:33 GMT"
+          ],
+          "Expires": [
+            "Thu, 19 Nov 1981 08:52:00 GMT"
+          ],
+          "Pragma": [
+            "no-cache"
+          ],
+          "Server": [
+            "Apache"
+          ],
+          "Strict-Transport-Security": [
+            "max-age=31536000; includeSubDomains"
+          ],
+          "Vary": [
+            "User-Agent"
+          ],
+          "X-Content-Type-Options": [
+            "nosniff",
+            "nosniff"
+          ],
+          "X-Frame-Options": [
+            "SAMEORIGIN",
+            "deny"
+          ],
+          "X-XSS-Protection": [
+            "1; mode=block"
+          ]
+        },
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "url": "<DDI_SERVER>/rest/ip_alias_delete"
+      }
+    }
+  ],
+  "recorded_with": "betamax/0.8.1"
+}

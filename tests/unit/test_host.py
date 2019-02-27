@@ -21,7 +21,7 @@ domain_name = os.environ.get('DOMAINNAME', 'example.com')
 Betamax.register_serializer(PrettyJSONSerializer)
 
 config = Betamax.configure()
-config.cassette_library_dir = 'tests/integration/cassettes'
+config.cassette_library_dir = 'tests/cassettes'
 config.default_cassette_options['serialize_with'] = 'prettyjson'
 config.default_cassette_options['placeholders'] = [
     {
@@ -51,23 +51,26 @@ config.default_cassette_options['placeholders'] = [
 ]
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture()
 def client():
     return initiate_session(ddi_password, False, ddi_username)
 
 
 def test_add_host(client):
     recorder = Betamax(client)
+
     with recorder.use_cassette('ddi_add_host'):
         result = add_host(building='TEST', department='TEST',
                           contact='Test User', ip='172.23.23.4',
                           phone='555-1212', name=ddi_host, session=client,
                           url=ddi_url, comment='Test Comment')
-        assert isinstance(result, dict)
+
+    assert isinstance(result, dict)
 
 
 def test_get_host(client):
     recorder = Betamax(client)
+
     with recorder.use_cassette('ddi_get_host'):
         result = get_host(fqdn=ddi_host, session=client, url=ddi_url)
 
@@ -79,6 +82,7 @@ def test_get_host(client):
 def test_delete_host(client):
     ip_id = '389885'
     recorder = Betamax(client)
+
     with recorder.use_cassette('ddi_delete_host'):
         result = delete_host(ip_id=ip_id, session=client, url=ddi_url)
 

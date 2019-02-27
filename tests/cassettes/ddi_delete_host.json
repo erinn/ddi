@@ -1,7 +1,7 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2019-01-30T18:53:38",
+      "recorded_at": "2019-02-27T20:23:35",
       "request": {
         "body": {
           "encoding": "utf-8",
@@ -10,9 +10,6 @@
         "headers": {
           "Content-Length": [
             "0"
-          ],
-          "Cookie": [
-            "PHPSESSID=b6me5eidgsf4um87f1f4640ess"
           ],
           "X-IPM-Password": [
             "<PASSWORD>"
@@ -40,7 +37,7 @@
             "application/json; charset=UTF-8"
           ],
           "Date": [
-            "Wed, 30 Jan 2019 18:53:37 GMT"
+            "Wed, 27 Feb 2019 20:23:35 GMT"
           ],
           "Expires": [
             "Thu, 19 Nov 1981 08:52:00 GMT"
@@ -50,6 +47,9 @@
           ],
           "Server": [
             "Apache"
+          ],
+          "Set-Cookie": [
+            "PHPSESSID=4p3pnv7tp258nbntjcmcf39ivd; path=/; secure; HttpOnly"
           ],
           "Strict-Transport-Security": [
             "max-age=31536000; includeSubDomains"

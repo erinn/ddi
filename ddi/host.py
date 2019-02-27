@@ -165,7 +165,8 @@ def delete(ctx, hosts):
         elif jsend.is_success(r):
             click.echo(f'Host: {host} deleted.')
         else:
-            click.echo(f'Deletion of host:{host} failed.')
+            click.echo(f'Deletion of host: {host} failed.')
+            ctx.exit(1)
 
 
 @host.command()

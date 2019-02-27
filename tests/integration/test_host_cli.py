@@ -154,5 +154,5 @@ def test_host_delete(client):
     assert '"data"' in cli_json_result.stdout
 
     assert failed_result.exit_code == 1
-    assert "Request failed" in failed_result.stdout
+    assert f'Deletion of host: {errant_ddi_host} failed.' in failed_result.stdout
 

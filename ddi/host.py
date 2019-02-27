@@ -132,6 +132,8 @@ def host(ctx):
 def add(ctx, building, comment, contact, department, ip, phone, host):
     """Add a single host entry into DDI."""
 
+    logger.debug('Add operation called for host: %s at ip %s', host, ip)
+
     r = add_host(building, department, contact, ip, phone, host,
                  ctx.obj['session'], ctx.obj['url'], comment=comment)
 
@@ -177,3 +179,4 @@ def info(ctx, hosts):
             echo_host_info(r)
         else:
             click.echo('Request failed, enable debugging for more.')
+            ctx.exit(1)

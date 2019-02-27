@@ -78,19 +78,21 @@ def test_host_add(client):
     jobj ={'session': client, 'url': ddi_url, 'json': True}
 
     with recorder.use_cassette('cli_host_add'):
-        cli_result = runner.invoke(host, ['add', ddi_host, '-b TEST',
-                                          '-d TEST', '-c Test User',
-                                          '-i 172.23.23.4', '-p 555-1212',
-                                          '--comment="Test Comment"'],
+        cli_result = runner.invoke(host, ['add', ddi_host, '-b', 'TEST',
+                                          '-d TEST', '-c', 'Test User',
+                                          '-i', '172.23.23.4', '-p',
+                                          '555-1212', '--comment',
+                                          'Test Comment"'],
                                    obj=obj)
-        cli_json_result = runner.invoke(host, ['add', ddi_host, '-b TEST',
-                                               '-d TEST', '-c Test User',
-                                               '-i 172.23.23.4', '-p 555-1212',
-                                               '--comment="Test Comment"'],
+        cli_json_result = runner.invoke(host, ['add', ddi_host, '-b', 'TEST',
+                                               '-d TEST', '-c', 'Test User',
+                                               '-i', '172.23.23.4', '-p',
+                                               '555-1212', '--comment',
+                                               'Test Comment"'],
                                         obj=jobj)
 
     assert cli_result.exit_code == 0
-    assert ('Hostname: ' + ddi_host) in cli_result.stdout
+    assert ('Host: ' + ddi_host + ' added') in cli_result.stdout
 
     assert cli_json_result.exit_code == 0
     assert '"data"' in cli_json_result.stdout
@@ -121,3 +123,14 @@ def test_host_info(client):
 
     assert failed_result.exit_code == 1
     assert "Request failed" in failed_result.stdout
+
+
+def test_host_delete(client):
+    """
+    Test the deletion of a host object via the CLI. The keen observer will
+    notice that this test is not in alphabetical order, this is needed due
+    to the fact that you can't get a hosts' information after the host
+    has been deleted :).
+    """
+
+

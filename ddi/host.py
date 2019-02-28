@@ -55,11 +55,9 @@ def add_host(building: str, department: str, contact: str,
 
     r = session.post(url + 'rest/ip_add', json=payload)
 
-    logger.debug('Add host result code: %s, JSON: %s', r.status_code, r.json())
+    result = get_exceptions(r)
 
-    r.raise_for_status()
-
-    return r.json()[0]
+    return result
 
 
 def delete_host(fqdn: str, session: object, url: str):
@@ -143,10 +141,12 @@ def add(ctx, building, comment, contact, department, ip, phone, host):
                  ctx.obj['session'], ctx.obj['url'], comment=comment)
 
     if ctx.obj['json']:
-        data = jsend.success(r)
-        click.echo(json.dumps(data, indent=2, sort_keys=True))
-    else:
+        click.echo(json.dumps(r, indent=2, sort_keys=True))
+    elif jsend.is_success(r):
         click.echo(f'Host: {host} added with IP {ip}.')
+    else:
+        click.echo(f'Host {host} addition with ip {ip} failed.')
+        ctx.exit(1)
 
 
 @host.command()

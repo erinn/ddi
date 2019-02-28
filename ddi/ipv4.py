@@ -1,4 +1,5 @@
 from ddi.cli import cli
+from ddi.subnet import get_subnet_info
 from ddi.utilites import echo_host_info, get_exceptions, hexlify_address
 
 import click
@@ -9,24 +10,33 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def get_free_ipv4(subnet_id: str, session:object, url:str):
+def get_free_ipv4(subnet: str, session: object, url: str):
     """
     Get a free IP address in a given subnet ID.
-    :param str subnet_id: The subnet ID to get the free IP for (e.g. 541)
+    :param str subnet: The subnet ID to get the free IP for (e.g. 172.23.23.0).
     :param object session: the requests session object
     :param url: The full URL of the DDI server.
     :return: The JSON response in JSEND format.
     :rtype: dict
     """
-    logger.debug('Getting free IP for subnet ID: %s', subnet_id)
+    logger.debug('Getting free IP for subnet: %s', subnet)
 
-    payload = {'subnet_id': subnet_id}
+    r = get_subnet_info(subnet, session, url)
 
-    r = session.get(url + '/rpc/ip_find_free_address', params=payload)
+    if jsend.is_success(r):
+        subnet_id = r['data']['results'][0]['subnet_id']
 
-    result = get_exceptions(r)
+        payload = {'subnet_id': subnet_id}
 
-    return result
+        r = session.get(url + '/rpc/ip_find_free_address', params=payload)
+
+        result = get_exceptions(r)
+
+        return result
+
+    else:
+        logger.debug('Failed: Getting free IP for subnet: %s', subnet)
+        return r
 
 
 def get_ipv4_info(ip: str, session: object, url: str):
@@ -73,3 +83,4 @@ def info(ctx, ips):
             echo_host_info(r)
         else:
             click.echo('Request failed, enable debugging for more.')
+            ctx.exit(1)

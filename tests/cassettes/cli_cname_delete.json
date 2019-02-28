@@ -1,7 +1,7 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2019-02-28T03:17:39",
+      "recorded_at": "2019-02-28T03:20:52",
       "request": {
         "body": {
           "encoding": "utf-8",
@@ -34,7 +34,7 @@
             "application/json; charset=UTF-8"
           ],
           "Date": [
-            "Thu, 28 Feb 2019 03:17:38 GMT"
+            "Thu, 28 Feb 2019 03:20:50 GMT"
           ],
           "Expires": [
             "Thu, 19 Nov 1981 08:52:00 GMT"
@@ -46,7 +46,7 @@
             "Apache"
           ],
           "Set-Cookie": [
-            "PHPSESSID=mevk3lupittja0k6094v6o1429; path=/; secure; HttpOnly"
+            "PHPSESSID=11ehkeh2d80op7g4ab093t6d8b; path=/; secure; HttpOnly"
           ],
           "Strict-Transport-Security": [
             "max-age=31536000; includeSubDomains"
@@ -74,7 +74,7 @@
       }
     },
     {
-      "recorded_at": "2019-02-28T03:17:39",
+      "recorded_at": "2019-02-28T03:20:52",
       "request": {
         "body": {
           "encoding": "utf-8",
@@ -88,7 +88,7 @@
             "application/json"
           ],
           "Cookie": [
-            "PHPSESSID=mevk3lupittja0k6094v6o1429"
+            "PHPSESSID=11ehkeh2d80op7g4ab093t6d8b"
           ],
           "X-IPM-Password": [
             "<PASSWORD>"
@@ -116,7 +116,7 @@
             "application/json; charset=UTF-8"
           ],
           "Date": [
-            "Thu, 28 Feb 2019 03:17:39 GMT"
+            "Thu, 28 Feb 2019 03:20:52 GMT"
           ],
           "Expires": [
             "Thu, 19 Nov 1981 08:52:00 GMT"
@@ -150,6 +150,207 @@
           "message": "OK"
         },
         "url": "<DDI_SERVER>/rest/ip_alias_delete"
+      }
+    },
+    {
+      "recorded_at": "2019-02-28T03:20:53",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": ""
+        },
+        "headers": {
+          "Cookie": [
+            "PHPSESSID=11ehkeh2d80op7g4ab093t6d8b"
+          ],
+          "X-IPM-Password": [
+            "<PASSWORD>"
+          ],
+          "X-IPM-Username": [
+            "<LOGIN>"
+          ]
+        },
+        "method": "GET",
+        "uri": "<DDI_SERVER>/rest/ip_address_list?WHERE=ip_alias+like+%27%25ddi-test-cname.int.example.com%25%27"
+      },
+      "response": {
+        "body": {
+          "encoding": null,
+          "string": ""
+        },
+        "headers": {
+          "Cache-Control": [
+            "no-store, no-cache, must-revalidate"
+          ],
+          "Date": [
+            "Thu, 28 Feb 2019 03:20:52 GMT"
+          ],
+          "Expires": [
+            "Thu, 19 Nov 1981 08:52:00 GMT"
+          ],
+          "Pragma": [
+            "no-cache"
+          ],
+          "Server": [
+            "Apache"
+          ],
+          "Strict-Transport-Security": [
+            "max-age=31536000; includeSubDomains"
+          ],
+          "Vary": [
+            "User-Agent"
+          ],
+          "X-Content-Type-Options": [
+            "nosniff",
+            "nosniff"
+          ],
+          "X-Frame-Options": [
+            "SAMEORIGIN",
+            "deny"
+          ],
+          "X-XSS-Protection": [
+            "1; mode=block"
+          ]
+        },
+        "status": {
+          "code": 204,
+          "message": "No Content"
+        },
+        "url": "<DDI_SERVER>/rest/ip_address_list?WHERE=ip_alias+like+%27%25ddi-test-cname.int.example.com%25%27"
+      }
+    },
+    {
+      "recorded_at": "2019-02-28T03:20:54",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": ""
+        },
+        "headers": {
+          "Cookie": [
+            "PHPSESSID=11ehkeh2d80op7g4ab093t6d8b"
+          ],
+          "X-IPM-Password": [
+            "<PASSWORD>"
+          ],
+          "X-IPM-Username": [
+            "<LOGIN>"
+          ]
+        },
+        "method": "GET",
+        "uri": "<DDI_SERVER>/rest/ip_address_list?WHERE=ip_alias+like+%27%25bad-test-cname.int.example.com%25%27"
+      },
+      "response": {
+        "body": {
+          "encoding": null,
+          "string": ""
+        },
+        "headers": {
+          "Cache-Control": [
+            "no-store, no-cache, must-revalidate"
+          ],
+          "Date": [
+            "Thu, 28 Feb 2019 03:20:53 GMT"
+          ],
+          "Expires": [
+            "Thu, 19 Nov 1981 08:52:00 GMT"
+          ],
+          "Pragma": [
+            "no-cache"
+          ],
+          "Server": [
+            "Apache"
+          ],
+          "Strict-Transport-Security": [
+            "max-age=31536000; includeSubDomains"
+          ],
+          "Vary": [
+            "User-Agent"
+          ],
+          "X-Content-Type-Options": [
+            "nosniff",
+            "nosniff"
+          ],
+          "X-Frame-Options": [
+            "SAMEORIGIN",
+            "deny"
+          ],
+          "X-XSS-Protection": [
+            "1; mode=block"
+          ]
+        },
+        "status": {
+          "code": 204,
+          "message": "No Content"
+        },
+        "url": "<DDI_SERVER>/rest/ip_address_list?WHERE=ip_alias+like+%27%25bad-test-cname.int.example.com%25%27"
+      }
+    },
+    {
+      "recorded_at": "2019-02-28T03:20:56",
+      "request": {
+        "body": {
+          "encoding": "utf-8",
+          "string": ""
+        },
+        "headers": {
+          "Cookie": [
+            "PHPSESSID=11ehkeh2d80op7g4ab093t6d8b"
+          ],
+          "X-IPM-Password": [
+            "<PASSWORD>"
+          ],
+          "X-IPM-Username": [
+            "<LOGIN>"
+          ]
+        },
+        "method": "GET",
+        "uri": "<DDI_SERVER>/rest/ip_address_list?WHERE=ip_alias+like+%27%25bad-test-cname.int.example.com%25%27"
+      },
+      "response": {
+        "body": {
+          "encoding": null,
+          "string": ""
+        },
+        "headers": {
+          "Cache-Control": [
+            "no-store, no-cache, must-revalidate"
+          ],
+          "Date": [
+            "Thu, 28 Feb 2019 03:20:54 GMT"
+          ],
+          "Expires": [
+            "Thu, 19 Nov 1981 08:52:00 GMT"
+          ],
+          "Pragma": [
+            "no-cache"
+          ],
+          "Server": [
+            "Apache"
+          ],
+          "Strict-Transport-Security": [
+            "max-age=31536000; includeSubDomains"
+          ],
+          "Vary": [
+            "User-Agent"
+          ],
+          "X-Content-Type-Options": [
+            "nosniff",
+            "nosniff"
+          ],
+          "X-Frame-Options": [
+            "SAMEORIGIN",
+            "deny"
+          ],
+          "X-XSS-Protection": [
+            "1; mode=block"
+          ]
+        },
+        "status": {
+          "code": 204,
+          "message": "No Content"
+        },
+        "url": "<DDI_SERVER>/rest/ip_address_list?WHERE=ip_alias+like+%27%25bad-test-cname.int.example.com%25%27"
       }
     }
   ],

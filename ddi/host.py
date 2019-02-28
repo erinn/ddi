@@ -160,7 +160,11 @@ def host(ctx):
 @click.argument('host', envvar='DDI_HOST_ADD_HOST', nargs=1)
 @click.pass_context
 def add(ctx, building, comment, contact, department, ip, phone, subnet, host):
-    """Add a single host entry into DDI."""
+    """
+    Add a single host entry into DDI. Specify the subnet (-s) using the
+    subnet ID (e.g. 172.23.23.0) to automatically receive a free ip, otherwise
+    specify the exact IP to use.
+    """
 
     logger.debug('Add operation called for host: %s at ip %s', host, ip)
 

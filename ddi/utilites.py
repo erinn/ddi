@@ -1,7 +1,82 @@
+from requests.exceptions import HTTPError
+from json.decoder import JSONDecodeError
 import binascii
+import click
+import jsend
+import logging
 import netaddr
 import socket
 import urllib
+
+logger = logging.getLogger(__name__)
+
+
+def echo_host_info(host_info):
+    """
+    A central function to echo out host info so code is not dulpicated
+    everywhere.
+
+    :param host_info: A JSEND success object.
+    :return: None
+    :rtype: None
+    """
+    logger.debug('Echoing host info.')
+    for host in host_info['data']['results']:
+        host = get_subnets(host)
+        host = query_string_to_dict(host)
+        click.echo('')
+        click.echo(f"Hostname: {host['name']}")
+        click.echo('Short Hostname: '
+                   f"{host['ip_class_parameters'].get('hostname', [''])[0]}")
+        click.echo(f"IP Address: {host['ip_addr']}")
+        click.echo(f"CNAMES: {host['ip_alias']}")
+        click.echo(f"Subnet Start: {host['subnet_start_ip_addr']}")
+        click.echo(f"Subnet End: {host['subnet_end_ip_addr']}")
+        click.echo(f"Subnet Netmask: {host['subnet_netmask']}")
+        click.echo(f"Subnet CIDR: {host['subnet_cidr']}")
+        click.echo('UCB Building: '
+                   f"{host['ip_class_parameters'].get('ucb_buildings', [''])[0]}")
+        click.echo('UCB Comment: '
+                   f"{host['ip_class_parameters'].get('ucb_comment', [''])[0]}")
+        click.echo('UCB Department: '
+                   f"{host['ip_class_parameters'].get('ucb_dept_aff', [''])[0]}")
+        click.echo(f"UCB Phone Number: "
+                   f"{host['ip_class_parameters'].get('ucb_ph_no', [''])[0]}")
+        click.echo('UCB Responsible Person: '
+                   f"{host['ip_class_parameters'].get('ucb_resp_per', [''])[0]}")
+        click.echo('')
+
+    return None
+
+
+def get_exceptions(result: object):
+    """
+    Catch and return errors from a request result.
+
+    :param result: A requests session result.
+    :return: A jsend formatted result with either success or failure.
+    :rtype: dict
+    """
+    logger.debug('Examining result for exceptions.')
+
+    # Determine if they gave us JSON, if not set the data to nothing.
+    try:
+        r_json = {'results': result.json()}
+    except JSONDecodeError:
+        logger.debug('Results are not JSON.')
+        r_json = {'results': []}
+
+    try:
+        result.raise_for_status()
+    except HTTPError:
+        logger.debug('HTTP Error Code: %s detected', result.status_code)
+        return jsend.fail(r_json)
+
+    # 204 is essentially an error, so we catch it.
+    if result.status_code == 204:
+        return jsend.fail(r_json)
+    else:
+        return jsend.success(r_json)
 
 
 def get_subnets(host_data: dict):

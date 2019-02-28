@@ -1,5 +1,6 @@
 from ddi.cli import cli
-from ddi.utilites import get_subnets, query_string_to_dict
+from ddi.utilites import echo_host_info, get_exceptions
+from ddi.ipv4 import get_free_ipv4
 
 import click
 import jsend
@@ -15,21 +16,23 @@ class NotFoundError(Exception):
 
 
 def add_host(building: str, department: str, contact: str,
-             ip: str, phone: str, name: str, session: object,  url: str,
-             comment=None, site_name: str = "UCB",):
+             phone: str, name: str, session: object,  url: str,
+             comment: str = None, ip: str = None, site_name: str = "UCB",
+             subnet: str = None):
     """
     Add a host to DDI.
 
     :param str building: The UCB building the host is located in.
     :param str contact: The UCB contact person for the host.
-    :param str comment: An optional comment.
     :param str department: The UCB department the host is affiliated with.
-    :param str ip: The IP address to give to the host.
     :param str phone: The phone number associated with the host.
     :param str name: The FQDN for the host, must be unique.
     :param object session: The requests session object.
     :param str url: The URL of the DDI server.
+    :param str comment: An optional comment.
+    :param str ip: The optional IP address to give to the host, either ip or subnet must be defined.
     :param str site_name: The site name to use, defaults to UCB.
+    :param str subnet: The optional subnet to use (e.g. 172.23.23.0) either ip or subnet must be defined.
     :return: The JSON result of the operation.
     :rtype: str
     """
@@ -46,6 +49,27 @@ def add_host(building: str, department: str, contact: str,
 
     ip_class_parameters = urllib.parse.urlencode(ip_class_parameters)
 
+    # If an IP is specified that is more specific than a subnet, if neither
+    # we fail.
+    if ip:
+        logger.debug('IP address: %s specified for host addition.', ip)
+
+        ip = ip
+    elif subnet:
+        logger.debug('Subnet: %s specified, automatic IP discover started.', subnet)
+
+        r = get_free_ipv4(subnet, session, url)
+
+        if jsend.success(r):
+            # Get the first free IP address offered.
+            ip = r['data']['results'][0]['hostaddr']
+
+            logger.debug('IP: %s, automatically obtained.', ip)
+        else:
+            return r
+    else:
+        return jsend.fail({})
+
     payload = {'hostaddr': ip, 'name': name, 'site_name': site_name,
                'ip_class_parameters': ip_class_parameters}
 
@@ -53,36 +77,39 @@ def add_host(building: str, department: str, contact: str,
                  'Department: %s, Contact: %s Phone: %s, and Payload: %s', name,
                  ip, building, department, contact, phone, payload)
 
-    r = session.post(url + 'ip_add', json=payload)
+    r = session.post(url + 'rest/ip_add', json=payload)
 
-    logger.debug('Add host result code: %s, JSON: %s', r.status_code, r.json())
+    result = get_exceptions(r)
 
-    r.raise_for_status()
-
-    return r.json()[0]
+    return result
 
 
-def delete_host(ip_id: str, session: object, url: str):
+def delete_host(fqdn: str, session: object, url: str):
     """
     Delete a given host by ip_id.
 
-    :param str ip_id: The IP ID from the DDI database.
+    :param str fqdn: The FQDN of the host object to delete.
     :param object session: The requests session object.
     :param str url: The URL of the DDI server.
     :return: The JSON result of the operation.
     :rtype: str
     """
-    logger.debug('Deleting host ip_id: %s', ip_id)
 
-    payload = {'ip_id': ip_id}
+    h = get_host(fqdn, session, url)
 
-    r = session.delete(url + 'ip_delete', params=payload)
+    if jsend.is_success(h):
+        ip_id = h['data']['results'][0]['ip_id']
 
-    logger.debug('Delete result code: %s, JSON: %s', r.status_code, r.json())
+        logger.debug('Deleting host: %s with ip_id: %s', fqdn, ip_id)
 
-    r.raise_for_status()
+        payload = {'ip_id': ip_id}
+        r = session.delete(url + 'rest/ip_delete', params=payload)
 
-    return r.json()[0]
+        result = get_exceptions(r)
+
+        return result
+    else:
+        return h
 
 
 def get_host(fqdn: str, session: object, url: str):
@@ -98,13 +125,11 @@ def get_host(fqdn: str, session: object, url: str):
     logger.debug('Getting host info for: %s', fqdn)
 
     payload = {'WHERE': f"name='{fqdn}'"}
-    r = session.get(url + 'ip_address_list', params=payload)
+    r = session.get(url + 'rest/ip_address_list', params=payload)
 
-    r.raise_for_status()
+    result = get_exceptions(r)
 
-    json_response = r.json()
-
-    return json_response
+    return result
 
 
 @cli.group()
@@ -125,23 +150,35 @@ def host(ctx):
               required=True)
 @click.option('--ip', '-i',
               help='The IPv4 address for the host as a dotted quad.',
-              prompt=True, required=True)
+              prompt=False, required=False)
 @click.option('--phone', '-p',
               help='The UCB phone number associated with the host.',
               prompt=True, required=True)
+@click.option('--subnet', '-s',
+              help='The subnet to automatically choose an IP from.',
+              prompt=False, required=False)
 @click.argument('host', envvar='DDI_HOST_ADD_HOST', nargs=1)
 @click.pass_context
-def add(ctx, building, comment, contact, department, ip, phone, host):
-    """Add a single host entry into DDI."""
+def add(ctx, building, comment, contact, department, ip, phone, subnet, host):
+    """
+    Add a single host entry into DDI. Specify the subnet (-s) using the
+    subnet ID (e.g. 172.23.23.0) to automatically receive a free ip, otherwise
+    specify the exact IP to use.
+    """
 
-    r = add_host(building, department, contact, ip, phone, host,
-                 ctx.obj['session'], ctx.obj['url'], comment=comment)
+    logger.debug('Add operation called for host: %s at ip %s', host, ip)
+
+    r = add_host(building, department, contact, phone, host,
+                 ctx.obj['session'], ctx.obj['url'], comment=comment, ip=ip,
+                 subnet=subnet)
 
     if ctx.obj['json']:
-        data = jsend.success(r)
-        click.echo(json.dumps(data, indent=2, sort_keys=True))
+        click.echo(json.dumps(r, indent=2, sort_keys=True))
+    elif jsend.is_success(r):
+        click.echo(f'Host: {host} added.')
     else:
-        click.echo(f'Host: {host} added with IP {ip}.')
+        click.echo(f'Host {host} addition failed.')
+        ctx.exit(1)
 
 
 @host.command()
@@ -154,49 +191,30 @@ def delete(ctx, hosts):
     logger.debug('Delete operation called on hosts: %s.', hosts)
 
     for host in hosts:
-        h = get_host(host, ctx.obj['session'], ctx.obj['url'])[0]
-        r = delete_host(h['ip_id'], ctx.obj['session'], ctx.obj['url'])
+        r = delete_host(host, ctx.obj['session'], ctx.obj['url'])
         if ctx.obj['json']:
-            data = jsend.success(r)
-            click.echo(json.dumps(data, indent=2, sort_keys=True))
-        else:
+            click.echo(json.dumps(r, indent=2, sort_keys=True))
+        elif jsend.is_success(r):
             click.echo(f'Host: {host} deleted.')
+        else:
+            click.echo(f'Deletion of host: {host} failed.')
+            ctx.exit(1)
 
 
 @host.command()
 @click.argument('hosts', envvar='DDI_HOST_INFO_HOSTS', nargs=-1)
 @click.pass_context
 def info(ctx, hosts):
-    """Provide the DDI info on the given host(s)."""
+    """Provide information on the given host(s)."""
 
     logger.debug('Info operation called on hosts: %s.', hosts)
 
     for host in hosts:
-        r = get_host(host, ctx.obj['session'], ctx.obj['url'])[0]
+        r = get_host(host, ctx.obj['session'], ctx.obj['url'])
         if ctx.obj['json']:
-            data = jsend.success(r)
-            click.echo(json.dumps(data, indent=2, sort_keys=True))
+            click.echo(json.dumps(r, indent=2, sort_keys=True))
+        elif jsend.is_success(r):
+            echo_host_info(r)
         else:
-            r = get_subnets(r)
-            r = query_string_to_dict(r)
-            click.echo('')
-            click.echo(f"Hostname: {r['name']}")
-            click.echo('Short Hostname: '
-                       f"{r['ip_class_parameters']['hostname'][0]}")
-            click.echo(f"IP Address: {r['ip_addr']}")
-            click.echo(f"CNAMES: {r['ip_alias']}")
-            click.echo(f"Subnet Start: {r['subnet_start_ip_addr']}")
-            click.echo(f"Subnet End: {r['subnet_end_ip_addr']}")
-            click.echo(f"Subnet Netmask: {r['subnet_netmask']}")
-            click.echo(f"Subnet CIDR: {r['subnet_cidr']}")
-            click.echo('UCB Building: '
-                       f"{r['ip_class_parameters']['ucb_buildings'][0]}")
-            click.echo('UCB Comment: '
-                       f"{r['ip_class_parameters']['ucb_comment'][0]}")
-            click.echo('UCB Department: '
-                       f"{r['ip_class_parameters']['ucb_dept_aff'][0]}")
-            click.echo(f"UCB Phone Number: "
-                       f"{r['ip_class_parameters']['ucb_ph_no'][0]}")
-            click.echo('UCB Responsible Person: '
-                       f"{r['ip_class_parameters']['ucb_resp_per'][0]}")
-            click.echo('')
+            click.echo('Request failed, enable debugging for more.')
+            ctx.exit(1)

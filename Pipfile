@@ -12,6 +12,7 @@ betamax-serializers = "*"
 coverage = "*"
 codecov = "*"
 pytest-cov = "*"
+flake8 = "*"
 
 [packages]
 click = "*"
@@ -22,6 +23,7 @@ netaddr = "*"
 pyjsend = "*"
 requests = "*"
 secretstorage = "*"
+url-normalize = "*"
 
 [requires]
 python_version = "3.7"

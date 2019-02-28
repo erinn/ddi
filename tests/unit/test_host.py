@@ -10,6 +10,7 @@ import pytest
 import url_normalize
 
 ddi_host = os.environ.get('DDI_HOST', 'ddi-test-host.example.com')
+ddi_host2 = os.environ.get('DDI_HOST2', 'ddi-test-host2.example.com')
 ddi_password = os.environ.get('DDI_PASSWORD', 'test_password')
 ddi_server = os.environ.get('DDI_SERVER', 'https://ddi.example.com')
 ddi_site_name = os.environ.get('DDI_SITE_NAME', 'EXAMPLE')
@@ -41,6 +42,10 @@ config.default_cassette_options['placeholders'] = [
         'replace': ddi_host
     },
     {
+        'placeholder': '<DDI_HOST2>',
+        'replace': ddi_host2
+    },
+    {
         'placeholder': 'example.com',
         'replace': domain_name
     },
@@ -57,15 +62,29 @@ def client():
 
 
 def test_add_host(client):
+    """
+    There are two ways to add a host, one by specifying the exact IP for the
+    host to use, two by specifying the subnet for the host to be on and allowing
+    DDI to find a free IP on the subnet and assigning it to the host.
+    """
     recorder = Betamax(client)
 
     with recorder.use_cassette('ddi_add_host'):
-        result = add_host(building='TEST', department='TEST',
-                          contact='Test User', ip='172.23.23.4',
-                          phone='555-1212', name=ddi_host, session=client,
-                          url=ddi_url, comment='Test Comment')
+        ip_result = add_host(building='TEST', department='TEST',
+                             contact='Test User', ip='172.23.23.4',
+                             phone='555-1212', name=ddi_host, session=client,
+                             url=ddi_url, comment='Test Comment')
+        subnet_result = add_host(building='TEST', department='TEST',
+                                 contact='Test User', subnet='172.23.23.0',
+                                 phone='555-1212', name=ddi_host2,
+                                 session=client, url=ddi_url,
+                                 comment='Test Comment')
 
-    assert isinstance(result, dict)
+    assert isinstance(ip_result, dict)
+    assert jsend.is_success(ip_result)
+
+    assert isinstance(subnet_result, dict)
+    assert jsend.is_success(subnet_result)
 
 
 def test_get_host(client):

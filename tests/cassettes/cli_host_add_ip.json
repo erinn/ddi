@@ -1,7 +1,7 @@
 {
   "http_interactions": [
     {
-      "recorded_at": "2019-02-27T21:49:56",
+      "recorded_at": "2019-02-28T20:53:39",
       "request": {
         "body": {
           "encoding": "utf-8",
@@ -40,7 +40,7 @@
             "application/json; charset=UTF-8"
           ],
           "Date": [
-            "Wed, 27 Feb 2019 21:49:55 GMT"
+            "Thu, 28 Feb 2019 20:53:39 GMT"
           ],
           "Expires": [
             "Thu, 19 Nov 1981 08:52:00 GMT"
@@ -52,7 +52,7 @@
             "Apache"
           ],
           "Set-Cookie": [
-            "PHPSESSID=56bgb5qqa1l3d7fs8qv5ihr0dt; path=/; secure; HttpOnly"
+            "PHPSESSID=9vpem5i7ajvdgrs1g7gr07suff; path=/; secure; HttpOnly"
           ],
           "Strict-Transport-Security": [
             "max-age=31536000; includeSubDomains"
@@ -80,7 +80,7 @@
       }
     },
     {
-      "recorded_at": "2019-02-27T21:49:56",
+      "recorded_at": "2019-02-28T20:53:39",
       "request": {
         "body": {
           "encoding": "utf-8",
@@ -94,7 +94,7 @@
             "application/json"
           ],
           "Cookie": [
-            "PHPSESSID=56bgb5qqa1l3d7fs8qv5ihr0dt"
+            "PHPSESSID=9vpem5i7ajvdgrs1g7gr07suff"
           ],
           "X-IPM-Password": [
             "<PASSWORD>"
@@ -122,7 +122,7 @@
             "application/json; charset=UTF-8"
           ],
           "Date": [
-            "Wed, 27 Feb 2019 21:49:56 GMT"
+            "Thu, 28 Feb 2019 20:53:39 GMT"
           ],
           "Expires": [
             "Thu, 19 Nov 1981 08:52:00 GMT"

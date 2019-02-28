@@ -171,9 +171,9 @@ def add(ctx, building, comment, contact, department, ip, phone, subnet, host):
     if ctx.obj['json']:
         click.echo(json.dumps(r, indent=2, sort_keys=True))
     elif jsend.is_success(r):
-        click.echo(f'Host: {host} added with IP {ip}.')
+        click.echo(f'Host: {host} added.')
     else:
-        click.echo(f'Host {host} addition with ip {ip} failed.')
+        click.echo(f'Host {host} addition failed.')
         ctx.exit(1)
 
 

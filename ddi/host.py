@@ -1,5 +1,6 @@
 from ddi.cli import cli
 from ddi.utilites import echo_host_info, get_exceptions
+from ddi.ipv4 import get_free_ipv4
 
 import click
 import jsend
@@ -15,21 +16,23 @@ class NotFoundError(Exception):
 
 
 def add_host(building: str, department: str, contact: str,
-             ip: str, phone: str, name: str, session: object,  url: str,
-             comment=None, site_name: str = "UCB",):
+             phone: str, name: str, session: object,  url: str,
+             comment: str = None, ip: str = None, site_name: str = "UCB",
+             subnet: str = None):
     """
     Add a host to DDI.
 
     :param str building: The UCB building the host is located in.
     :param str contact: The UCB contact person for the host.
-    :param str comment: An optional comment.
     :param str department: The UCB department the host is affiliated with.
-    :param str ip: The IP address to give to the host.
     :param str phone: The phone number associated with the host.
     :param str name: The FQDN for the host, must be unique.
     :param object session: The requests session object.
     :param str url: The URL of the DDI server.
+    :param str comment: An optional comment.
+    :param str ip: The optional IP address to give to the host, either ip or subnet must be defined.
     :param str site_name: The site name to use, defaults to UCB.
+    :param str subnet: The optional subnet to use (e.g. 172.23.23.0) either ip or subnet must be defined.
     :return: The JSON result of the operation.
     :rtype: str
     """
@@ -45,6 +48,27 @@ def add_host(building: str, department: str, contact: str,
         ip_class_parameters['ucb_comment'] = comment
 
     ip_class_parameters = urllib.parse.urlencode(ip_class_parameters)
+
+    # If an IP is specified that is more specific than a subnet, if neither
+    # we fail.
+    if ip:
+        logger.debug('IP address: %s specified for host addition.', ip)
+
+        ip = ip
+    elif subnet:
+        logger.debug('Subnet: %s specified, automatic IP discover started.', subnet)
+
+        r = get_free_ipv4(subnet, session, url)
+
+        if jsend.success(r):
+            # Get the first free IP address offered.
+            ip = r['data']['results'][0]['hostaddr']
+
+            logger.debug('IP: %s, automatically obtained.', ip)
+        else:
+            return r
+    else:
+        return jsend.fail({})
 
     payload = {'hostaddr': ip, 'name': name, 'site_name': site_name,
                'ip_class_parameters': ip_class_parameters}
@@ -126,19 +150,23 @@ def host(ctx):
               required=True)
 @click.option('--ip', '-i',
               help='The IPv4 address for the host as a dotted quad.',
-              prompt=True, required=True)
+              prompt=False, required=False)
 @click.option('--phone', '-p',
               help='The UCB phone number associated with the host.',
               prompt=True, required=True)
+@click.option('--subnet', '-s',
+              help='The subnet to automatically choose an IP from.',
+              prompt=False, required=False)
 @click.argument('host', envvar='DDI_HOST_ADD_HOST', nargs=1)
 @click.pass_context
-def add(ctx, building, comment, contact, department, ip, phone, host):
+def add(ctx, building, comment, contact, department, ip, phone, subnet, host):
     """Add a single host entry into DDI."""
 
     logger.debug('Add operation called for host: %s at ip %s', host, ip)
 
-    r = add_host(building, department, contact, ip, phone, host,
-                 ctx.obj['session'], ctx.obj['url'], comment=comment)
+    r = add_host(building, department, contact, phone, host,
+                 ctx.obj['session'], ctx.obj['url'], comment=comment, ip=ip,
+                 subnet=subnet)
 
     if ctx.obj['json']:
         click.echo(json.dumps(r, indent=2, sort_keys=True))

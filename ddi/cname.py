@@ -88,11 +88,9 @@ def get_cname_info(cname: str, session: object, url: str):
 
     r = session.get(url + 'rest/ip_address_list', params=payload)
 
-    r.raise_for_status()
+    result = get_exceptions(r)
 
-    logger.debug('Get cname result code: %s, JSON: %s', r.status_code, r.json())
-
-    return r.json()
+    return result
 
 
 @cli.group()
@@ -112,10 +110,11 @@ def add(ctx, host, cname):
     r = add_cname(cname, host_data, ctx.obj['session'], ctx.obj['url'])
 
     if ctx.obj['json']:
-        data = jsend.success(r)
-        click.echo(json.dumps(data, indent=2, sort_keys=True))
-    else:
+        click.echo(json.dumps(r, indent=2, sort_keys=True))
+    elif jsend.is_success(r):
         click.echo(f"CNAME: {cname} added to host: {host_data['name']}.")
+    else:
+        click.echo(f"CNAME: {cname} addition to host {host_data['name']} failed.")
 
 
 @cname.command()
@@ -128,10 +127,12 @@ def delete(ctx, cname):
     r = delete_cname(cname, host_data, ctx.obj['session'], ctx.obj['url'])
 
     if ctx.obj['json']:
-        data = jsend.success(r)
-        click.echo(json.dumps(data, indent=2, sort_keys=True))
-    else:
+        click.echo(json.dumps(r, indent=2, sort_keys=True))
+    elif jsend.is_success(r):
         click.echo(f"CNAME: {cname} deleted from host: {host_data['name']}.")
+    else:
+        click.echo(f"CNAME delete failed for: {cname}")
+        ctx.exit(1)
 
 
 @cname.command()
@@ -140,11 +141,14 @@ def delete(ctx, cname):
 def info(ctx, cname):
     """Retrieve the host info associated with a CNAME."""
 
-    host_data = get_cname_info(cname, ctx.obj['session'], ctx.obj['url'])[0]
+    r = get_cname_info(cname, ctx.obj['session'], ctx.obj['url'])
 
     if ctx.obj['json']:
-        data = jsend.success(host_data)
-        click.echo(json.dumps(data, indent=2, sort_keys=True))
-    else:
+        click.echo(json.dumps(r, indent=2, sort_keys=True))
+    elif jsend.is_success(r):
+        host_data = r['data']['results'][0]
         click.echo(f"Hostname: {host_data['name']}.")
         click.echo(f"CNAMES: {host_data['ip_alias']}")
+    else:
+        click.echo(f'CNAME info for {cname} failed.')
+        ctx.exit(1)

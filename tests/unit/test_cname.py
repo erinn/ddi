@@ -74,8 +74,9 @@ def test_get_cname(client):
     with recorder.use_cassette('ddi_get_cname'):
         result = get_cname_info(cname=ddi_cname, session=client, url=ddi_url)
 
-    assert isinstance(result, list)
-    assert result[0]['name'] == ddi_host
+    assert isinstance(result, dict)
+    assert jsend.is_success(result)
+    assert result['data']['results'][0]['name'] == ddi_host
 
 
 def test_delete_cname(client):

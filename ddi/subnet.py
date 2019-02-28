@@ -52,6 +52,11 @@ def info(ctx, subnets):
         if ctx.obj['json']:
             click.echo(json.dumps(r, indent=2, sort_keys=True))
         elif jsend.is_success(r):
-            echo_host_info(r)
+            s = r['data']['results'][0]
+            click.echo(f"Subnet Name: {s['subnet_name']}")
+            click.echo(f"Subnet ID: {s['subnet_id']}")
+            click.echo(f"Subnet Size: {s['subnet_size']}")
+            click.echo(f"Subnet Percent Used: {s['subnet_used_percent']}")
         else:
             click.echo('Request failed, enable debugging for more.')
+            ctx.exit(1)

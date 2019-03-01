@@ -5,7 +5,7 @@ python:
 install:
   - 'pip install pipenv'
   - 'pipenv install --dev'
-  - 'flit install'
+  - 'flit install --symlink'
 
 script: 'py.test --cov-report=xml --cov=./ tests/'
 

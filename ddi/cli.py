@@ -36,7 +36,7 @@ def cli_password(ctx, param, password):
     else:
         logger.debug('Password not passed in, attempting to extract from '
                      'keyring location: %s.', ddi.__name__)
-        keyring.get_keyring()
+
         password = keyring.get_password(ddi.__name__, username)
         if password:
             logger.debug('Password obtained from keyring.')

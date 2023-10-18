@@ -17,6 +17,7 @@ requires = [
     "pyyaml",
     "requests",
     "secretstorage",
+    "url-normalize",
 ]
 
 [tool.flit.scripts]
